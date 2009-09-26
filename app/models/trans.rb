@@ -1,5 +1,3 @@
-require 'will_paginate'
-
 class Trans < ActiveRecord::Base
 	belongs_to :sourceAccount, :class_name => 'Account', :foreign_key => 'source_account_id'
 	belongs_to :destAccount, :class_name => 'Account', :foreign_key => 'dest_account_id'
