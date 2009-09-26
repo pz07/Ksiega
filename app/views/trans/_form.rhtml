@@ -1,0 +1,52 @@
+
+<%= error_messages_for 'trans' %>
+
+<tr>
+  <td class="header">Nazwa</td>
+  <td class="content">
+    <%= text_field 'trans', 'name' %>
+  </td>
+</tr>
+<tr>
+  <td class="header">Kategoria</td>
+  <td class="content">
+  	 <%= hidden_field 'trans', 'category_id' %>
+     <table style="width: 100%;">
+     	<tr>
+     		<td id="categoryName">
+     			<% if @catName == nil%>
+	     			<i>-Wybierz kategorię-</>
+				<% else%>
+					<%= @catName%>
+				<% end%>
+			</td>		
+			<td style="text-align: right;"><a href="javascript:showDialog();">Wybierz</a></td>
+      	</tr>
+	 </table>
+  </td>
+</tr>
+<tr>
+  <td class="header">Kwota</td>
+  <td class="content">
+    <%= text_field 'trans', 'amount' %>
+  </td>
+</tr>
+<tr>
+  <td class="header">Date</td>
+  <td class="content">
+      	<%= text_field 'trans', 'trans_date', {:size => 10, :maxlength => 10}%>
+		<span id="trans[trans_date]Calendar"></span>
+  </td>
+</tr>
+<tr>
+  <td class="header">Z konta</td>
+  <td class="content">
+    <%= collection_select(:trans, :source_account_id, @accounts, :id, :name, options ={:prompt => ""}) %>
+  </td>
+</tr>
+<tr>
+  <td class="header">Na konto</td>
+  <td class="content">
+    <%= collection_select(:trans, :dest_account_id, @accounts, :id, :name, options ={:prompt => ""}) %>
+  </td>
+</tr>

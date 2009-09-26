@@ -1,0 +1,56 @@
+<html>
+<head>
+  <title>KSIĘGA</title>
+  <%= stylesheet_link_tag 'style' %>
+  <%= stylesheet_link_tag 'yui/fonts-min'%>
+
+  <style>
+    .menu_link a{
+      color: white;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <table style="width: 100%; height: 100%;">
+    <tr style="vertical-align: top;">
+      <td style="width: 20%; background-color: black; color: white; padding: 10px;" class="menu_link">
+		<div>
+			<%= link_to "Dodaj transakcje", :controller => "trans", :action => "new" %>
+		</div>
+		<div>
+			<%= link_to "Uaktualnij stan konta", :controller => "trans", :action => "update_cash_form" %>
+		</div>
+		<br>
+		<div>
+			<%= link_to "Statystyki", :controller => "stats", :action => "all" %>
+		</div>
+		<br>
+		<div>
+			<%= link_to "Konta", :controller => "account", :action => "list" %>
+		</div>
+		<div>
+			<%= link_to "Kategorie wydatków", :controller => "category", :action => "list" %>
+		</div>
+		<div>
+			<%= link_to "Szukaj", :controller => "trans", :action => "search" %>
+		</div>
+		<br>
+		<br>
+		<br>
+		<div><B>TODO</B></div>
+		<div>- przegląd kategorii transakcji do strony 11</div>
+		<div>- rekurencyjne obliczanie kwot transakcji w kategoriach</div>
+		<div>- dziennik zdarzeń (triggerami??)</div>
+		<div>- jeżeli kategoria ma dzieci, to nie może mieć transakcji</div>
+      <td>
+      <td style="vertical-align: top;">
+	<%= @content_for_layout %>
+      <td>
+      <td>
+
+      <td>
+    </tr>
+  </table>
+</body>
+</html>

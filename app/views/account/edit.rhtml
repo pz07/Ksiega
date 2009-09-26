@@ -1,0 +1,13 @@
+<div class="title">Modyfikacja konta</div>
+
+<%= link_to 'Wstecz', :action => 'list' %>
+<br>
+<br>
+
+<%= start_form_tag :action => 'update', :id => @account %>
+  <table class="form_table">
+    <%= render_partial "form" %>
+  <table>
+  <br>
+  <%= submit_tag "Modyfikuj" %>
+<%= end_form_tag %>

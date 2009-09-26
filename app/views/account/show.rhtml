@@ -1,0 +1,77 @@
+<div class="title">Szczegóły kategorii</div>
+
+<%= link_to 'Powrót', :action => 'back' %>
+<br>
+<br>
+
+<table class="details_table">
+  <tr>
+    <td class="header">Id</td>
+    <td class="content"><%= @account.id%></td>
+  </tr>
+  <tr>
+    <td class="header">Nazwa</td>
+    <td class="content"><%= @account.name%></td>
+  </tr>
+  <tr>
+    <td class="header">Saldo</td>
+    <td class="content"><%= @account.balance%></td>
+  </tr>
+  <tr>
+    <td class="header">Data utworzenia</td>
+    <td class="content"><%= date_time_format(@account.created_on) %></td>
+  </tr>
+  <tr>
+    <td class="header">Data modyfikacji</td>
+    <td class="content"><%= date_time_format(@account.updated_on) %></td>
+  </tr>
+<table>
+	
+<br>
+
+<table style="width: 100%;">
+	<tr>
+		<td>Transakcje przychodzące:</td>
+		<td>Transakcje wychodzące:</td>
+	</tr>
+	<tr>
+		<td style="width: 50%; vertical-align: top;">
+			<table class="list_table">
+			  <tr>
+			    <th>data</th>
+			    <th>kwota</th>
+			    <th>opis</th>
+			    <th>z konta</th>
+			  </tr>
+			<% for inTrans in @inTranss %>
+			  <tr>
+			    <td><%= date_format(inTrans.trans_date) %></td>
+			    <td style="text-align: right;"><%= inTrans.amount %></td>
+			    <td><%= inTrans.name %></td>
+			    <td><%= inTrans.sourceAccount.name if inTrans.sourceAccount != nil %></td>
+			  </tr>
+			<% end %>
+			</table>
+			<%= pagination_links(@inTranss_pages, :name => 'pageIn') %>
+		</td>
+		<td style="width: 50%; vertical-align: top;">
+			<table class="list_table">
+			  <tr>
+			    <th>data</th>
+			    <th>kwota</th>
+			    <th>opis</th>
+			    <th>na konto</th>
+			  </tr>
+			<% for outTrans in @outTranss %>
+			  <tr>
+			    <td><%= date_format(outTrans.trans_date) %></td>
+			    <td style="text-align: right;"><%= outTrans.amount %></td>
+			    <td><%= outTrans.name %></td>
+			    <td><%= outTrans.destAccount.name if outTrans.destAccount != nil %></td>
+			  </tr>
+			<% end %>
+			</table>
+			<%= pagination_links(@outTranss_pages, :name => 'pageOut') %>
+		</td>
+	</tr>
+</table>

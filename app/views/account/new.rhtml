@@ -1,0 +1,13 @@
+<div class="title">Nowa kategoria</div>
+
+<%= link_to 'Wstecz', :action => 'back' %>
+<br>
+<br>
+
+<% form_tag({:action => 'create'}) do %>
+  <table class="form_table">
+    <%= render_partial "form" %>
+  <table>
+  <br>
+  <%= submit_tag "Dodaj" %>
+<% end %>

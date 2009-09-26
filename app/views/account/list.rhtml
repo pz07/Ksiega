@@ -1,0 +1,28 @@
+<div class="title">Konta</div>
+
+<%= link_to 'Nowe konto', :action => 'new' %>
+<br>
+<br>
+
+<table class="list_table">
+  <tr>
+    <th>id</th>
+    <th>nazwa</th>
+    <th>saldo</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+<% for account in @accounts %>
+  <tr>
+    <td><%= account.id %></td>
+    <td><%= account.name %></td>
+    <td style="text-align: right;"><%= account.balance %></td>
+    <td><%= link_to 'Szczegóły', :action => 'show', :id => account %></td>
+    <td><%= link_to 'Edytuj', :action => 'edit', :id => account %></td>
+    <td><%= link_to 'Usuń', {:action => 'destroy', :id => account}, :confirm => "Jesteś pewien?" %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @accounts %>

@@ -1,0 +1,336 @@
+<%= stylesheet_link_tag 'yui/container'%>
+<%= stylesheet_link_tag 'yui/treeview'%>
+
+<style type="text/css">
+	#catTreeDiv {background: #fff; margin-top:1em; padding:1em; min-height:7em;}
+</style>
+
+<%= javascript_include_tag 'yui/general/yuiloader-beta'%>
+<%= javascript_include_tag 'yui/general/event'%>
+<%= javascript_include_tag 'yui/general/connection'%>
+<%= javascript_include_tag 'yui/general/dom'%>
+<%= javascript_include_tag 'yui/general/dragdrop'%>
+<%= javascript_include_tag 'yui/general/container'%>
+
+<%= javascript_include_tag 'yui/general/yahoo-dom-event'%>
+<%= javascript_include_tag 'yui/general/container_core'%>
+<%= javascript_include_tag 'yui/general/element-beta'%>
+
+<%= javascript_include_tag 'yui/treeview/treeview'%>
+<%= javascript_include_tag 'ksiega_categories'%>
+
+<script type="text/javascript">
+<!--
+	var catTree = null;
+	var selectedNode = null;
+	
+	var catParents = null;
+	
+	function createCategoryTree(){
+	
+		//Utworzenie drzewa
+		var tree;
+	    
+    	function loadNodeData(node, fnLoadComplete)  {
+		   var sUrl = "/ajax/getSubCategories?parentCatId=" + node.data.id; 
+	     
+		   var callback = { 
+	    	    success: function(oResponse) { 
+					result = oResponse.responseText;
+				
+					categories = result.split("|");
+					for(var i = 0; i < categories.length; i++){
+						catDef = categories[i].split(":");
+						if(catDef.length == 3){
+							var tempNode = new YAHOO.widget.TextNode({id: catDef[0], label: catDef[1]}, node, false); 	
+							if(isNaN(catDef[2]) || Number(catDef[2]) == 0 ){
+								tempNode.isLeaf = true;
+							}
+						}
+					}
+	            	oResponse.argument.fnLoadComplete(); 
+	        	}, 
+		        failure: function(oResponse) { 
+		            alert('błąd (Zrobić coś z tym!)!!!!!!!!');
+	    	        oResponse.argument.fnLoadComplete(); 
+	        	}, 
+		        argument: { 
+		            "node": node, 
+	    	        "fnLoadComplete": fnLoadComplete 
+	        	}, 
+		        timeout: 1000 
+		    }; 
+	     
+	    	YAHOO.util.Connect.asyncRequest('GET', sUrl, callback); 
+	     }
+	 
+	 	tree = new YAHOO.widget.TreeView("catsDiv");
+		tree.setDynamicLoad(loadNodeData, 0);
+	    
+		var root = tree.getRoot();
+	    
+		var tempNode = new YAHOO.widget.TextNode({id: 0, label: 'Kategorie'}, root, false); 	
+	 
+	 	tree.subscribe("labelClick", function(node) { 
+		  hideButtons();
+		
+    	  if(selectedNode != null && selectedNode.data.id == node.data.id){
+		  	 selectedNode = null; 
+			 node.labelStyle = "ygtvlabel";
+		  }
+		  else{
+		  	if(selectedNode != null){
+			 	selectedNode.labelStyle = "ygtvlabel";
+			}
+			
+			document.getElementById('newBtn').style.display = '';
+			if(node.data.id != 0){
+				document.getElementById('cNameBtn').style.display = '';
+				document.getElementById('cParentBtn').style.display = '';
+				document.getElementById('deleteBtn').style.display = '';
+			}
+			
+			node.labelStyle = 'checkedLabel';
+    	  	selectedNode = node;
+		  }
+   	 	  node.tree.draw();
+ 	 	}); 
+	    
+	 	tree.draw();
+	 
+	 	return tree;
+	}
+	
+	function hideButtons(){
+		document.getElementById('cNameBtn').style.display = 'none';
+		document.getElementById('cParentBtn').style.display = 'none';
+		document.getElementById('deleteBtn').style.display = 'none';
+		document.getElementById('newBtn').style.display = 'none';
+	}
+	
+	function changeName(){
+		var newName = prompt('Podaj nową nazwę dla kategorii:', selectedNode.data.label);
+		if(newName.match(/$\s*^/)){
+			alert("Nie podano żadnej nazwy!");
+			return;
+		}
+		
+		var callback = { 
+			success: function(o) {
+				var resp = o.responseText;
+				if(isNaN(resp) || Number(resp) >= 0){
+					document.getElementById('status').innerHTML = 'Zmieniono nazwę kategorii.';
+					
+					selectedNode.setUpLabel({
+						id: selectedNode.data.id,
+						label: resp
+					});
+					
+					catTree.draw();
+				}
+				else{
+					if (Number(resp) == -1) {
+						document.getElementById('status').innerHTML = "Błąd! Nie znaleziono kategorii!";
+					}
+					else if (Number(resp == -2)) {
+						document.getElementById('status').innerHTML = "Błąd! Naruszenie unikalności!";
+					}
+					else {
+						document.getElementById('status').innerHTML = "Nieznany błąd (" + resp + ")!";
+					}
+				}
+			}, 
+			failure: function(o) {
+				document.getElementById('status').innerHTML = 'Nie udało się zmienić nazwy kategorii ('+o.statusText+')!';
+			}, 
+			argument: [] 
+		}
+				
+		document.getElementById('status').innerHTML = 'Proszę czekać...';
+			
+		var url = '/category/changeName?catId='+selectedNode.data.id+'&newName='+newName;
+		var transaction = YAHOO.util.Connect.asyncRequest('GET', url, callback, null);
+	}
+	
+	function newCat(){
+		var newName = prompt('Podaj nazwę nowej kategorii:');
+		if(newName.match(/$\s*^/)){
+			alert("Nie podano żadnej nazwy!");
+			return;
+		}
+		
+		var callback = { 
+			success: function(o) {
+				var resp = o.responseText;
+				if(isNaN(resp) || Number(resp) >= 0){
+					document.getElementById('status').innerHTML = 'Dodano kategorię!';
+					
+					selectedNode.isLeaf = false;
+					
+					catTree.removeChildren(selectedNode); 
+					catTree.draw();
+					
+					selectedNode.expand();
+				}
+				else{
+					if (Number(resp) == -1) {
+						document.getElementById('status').innerHTML = "Błąd! Nie znaleziono rodzica!";
+					}
+					else if (Number(resp == -2)) {
+						document.getElementById('status').innerHTML = "Błąd! Naruszenie unikalności!";
+					}
+					else {
+						document.getElementById('status').innerHTML = "Nieznany błąd (" + resp + ")!";
+					}
+				}
+			}, 
+			failure: function(o) {
+				document.getElementById('status').innerHTML = 'Nie udało się dodać kategorii ('+o.statusText+')!';
+			}, 
+			argument: [] 
+		}
+				
+		document.getElementById('status').innerHTML = 'Proszę czekać...';
+			
+		var url = '/category/newCat?parentId='+selectedNode.data.id+'&name='+newName;
+		var transaction = YAHOO.util.Connect.asyncRequest('GET', url, callback, null);
+	}
+	
+	function delCat(){
+		if(!confirm("Na pewno usunąć kategorię?")){
+			return;
+		}
+		
+		var callback = { 
+			success: function(o) {
+				var resp = o.responseText;
+				if(isNaN(resp) || Number(resp) >= 0){
+					document.getElementById('status').innerHTML = 'Usunięto kategorię!';
+					
+					var par = selectedNode.parent;
+					selectedNode = null;
+					hideButtons();
+					
+					catTree.removeChildren(par); 
+					catTree.draw();
+					
+					par.expand();
+				}
+				else{
+					if (Number(resp) == -1) {
+						document.getElementById('status').innerHTML = "Błąd! Nie znaleziono kategorii!";
+					}
+					else if (Number(resp == -2)) {
+						document.getElementById('status').innerHTML = "Błąd! Kategoria ma dzieci lub transakcje!";
+					}
+					else {
+						document.getElementById('status').innerHTML = "Nieznany błąd (" + resp + ")!";
+					}
+				}
+			}, 
+			failure: function(o) {
+				document.getElementById('status').innerHTML = 'Nie udało się usunąć kategorii ('+o.statusText+')!';
+			}, 
+			argument: [] 
+		}
+				
+		document.getElementById('status').innerHTML = 'Proszę czekać...';
+			
+		var url = '/category/delCat?catId='+selectedNode.data.id;
+		var transaction = YAHOO.util.Connect.asyncRequest('GET', url, callback, null);
+	}
+	
+	function changeParent(){
+		catParents[1].removeChildren(catParents[1].getRoot().children[0]); 
+		catParents[1].getRoot().children[0].expand();
+		
+		catParents[0].show();
+	}
+	
+	function submitChangeParent(parentId, parentName){
+		if(!parentName || parentName.match(/^\s*$/)){
+			catParents[0].hide();
+			
+			alert('Nie wybrano rodzica!');
+			return;
+		}
+		
+		var callback = { 
+			success: function(o) {
+				var resp = o.responseText;
+				if(isNaN(resp) || Number(resp) >= 0){
+					document.getElementById('status').innerHTML = 'Zmieniono rodzica kategorii!';
+					
+					var catPar = selectedNode.parent;
+					
+					selectedNode = null;
+					hideButtons();
+					
+					catTree.removeChildren(catPar); 
+					catTree.removeChildren(catTree.getRoot().children[0]);
+					catTree.draw();
+					
+					catTree.getRoot().children[0].expand();
+					//catPar.expand();
+				}
+				else{
+					if (Number(resp) == -1) {
+						document.getElementById('status').innerHTML = "Błąd! Nie znaleziono kategorii lub rodzica!";
+					}
+					else if (Number(resp == -2)) {
+						document.getElementById('status').innerHTML = "Błąd! Kategoria nie może być swoim dzieckiem!";
+					}
+					else {
+						document.getElementById('status').innerHTML = "Nieznany błąd (" + resp + ")!";
+					}
+				}
+			}, 
+			failure: function(o) {
+				document.getElementById('status').innerHTML = 'Nie udało się zmienić rodzica kategorii ('+o.statusText+')!';
+			}, 
+			argument: [] 
+		}
+				
+		document.getElementById('status').innerHTML = 'Proszę czekać...';
+			
+		var url = '/category/changeParent?catId='+selectedNode.data.id+'&newParentId='+parentId;
+		var transaction = YAHOO.util.Connect.asyncRequest('GET', url, callback, null);
+	}
+
+	YAHOO.util.Event.onDOMReady(function () {
+		catTree = createCategoryTree();
+		catParents = createCategoryPanel(submitChangeParent);
+	})
+//-->
+</script>
+
+<div class="title">Kategorie przychodów/rozchodów</div>
+
+<div>
+	&nbsp;
+	<input id="cNameBtn" type="button" value="Zmień nazwę" onclick="javascript:changeName();" style="display: none;"/>
+	<input id="cParentBtn" type="button" value="Zmień rodzica" onclick="javascript:changeParent();" style="display: none;"/>
+	<input id="newBtn" type="button" value="Nowa kategoria" onclick="javascript:newCat();" style="display: none;"/>
+	<input id="deleteBtn" type="button" value="Usuń kategorię" onclick="javascript:delCat();" style="display: none;"/>
+</div>
+<br>
+<div id="status">
+	&nbsp;
+</div>
+<br>
+<div>
+	<div class="bd">
+		<div id="catsDiv"></div>
+	</div>
+</div>
+
+<div id="catDialogDiv">
+	<div class="hd">Wybierz kategorię.</div>
+	<div class="bd">
+		<form method="POST">
+			<input type="hidden" name="categoryName" />
+			<input type="hidden" name="categoryId" />
+			<div id="catTreeDiv"></div>
+		</form>
+	</div>
+</div>

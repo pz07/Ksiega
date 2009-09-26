@@ -1,0 +1,74 @@
+<div class="title">Zwrot</div>
+
+<%= link_to 'Wstecz', :action => 'back' %>
+
+<% form_tag({:action => 'createReturn'}) do %>
+  <input type="hidden" name="baseTransId" value="<%= @baseTrans.id%>"/>
+  <table class="form_table">
+    <%= stylesheet_link_tag 'yui/calendar'%>
+	<%= stylesheet_link_tag 'yui/container'%>
+	<%= stylesheet_link_tag 'yui/button'%>
+	
+	<style type="text/css">
+	
+		#trans\[trans_date\] button
+		{
+	    	background:url(/images/calbtn.gif) center center no-repeat;
+		    text-align: left;
+	        text-indent: -10em;
+	        overflow: hidden;
+	        white-space: nowrap;
+	        width: 21px;
+	        margin-right: 5px;
+	    }
+	
+	</style>
+	
+	<%= javascript_include_tag 'yui/general/yahoo-dom-event'%>
+	<%= javascript_include_tag 'yui/calendar/calendar'%>
+	<%= javascript_include_tag 'yui/general/container_core'%>
+	<%= javascript_include_tag 'yui/general/element-beta'%>
+	<%= javascript_include_tag 'yui/general/button'%>
+	
+	<%= javascript_include_tag 'ksiega_calendar'%>
+	
+	<script type="text/javascript">
+	<!--
+		YAHOO.util.Event.onDOMReady(function () {
+			createCalendar('trans[trans_date]', 'Wybierz datę', 'menubutton');
+		})
+	//-->
+	</script>
+	
+	<%= error_messages_for 'trans' %>
+
+	<tr>
+	  <td class="header">Zwrot za transakcję</td>
+	  <td class="content">
+	  	<%= @baseTrans.name%>
+	  </td>
+	</tr>
+	<tr>
+	  <td class="header">Kwota</td>
+	  <td class="content">
+	    <%= text_field 'trans', 'amount' %>
+	  </td>
+	</tr>
+	<tr>
+	  <td class="header">Date</td>
+	  <td class="content">
+	      	<%= text_field 'trans', 'trans_date', {:size => 10, :maxlength => 10}%>
+			<span id="trans[trans_date]Calendar"></span>
+	  </td>
+	</tr>
+	<tr>
+	  <td class="header">Na konto</td>
+	  <td class="content">
+	    <%= collection_select(:trans, :dest_account_id, @accounts, :id, :name, options ={:prompt => ""}) %>
+	  </td>
+	</tr>
+  <table>
+  <br>
+  <%= submit_tag "Dodaj" %>
+<% end %>
+

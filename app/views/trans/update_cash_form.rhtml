@@ -1,0 +1,224 @@
+<%= stylesheet_link_tag 'yui/calendar'%>
+<%= stylesheet_link_tag 'yui/container'%>
+<%= stylesheet_link_tag 'yui/button'%>
+<%= stylesheet_link_tag 'yui/treeview'%>
+
+<style type="text/css">
+
+	#trans_date button
+	{
+    	background:url(/images/calbtn.gif) center center no-repeat;
+	    text-align: left;
+        text-indent: -10em;
+        overflow: hidden;
+        white-space: nowrap;
+        width: 21px;
+        margin-right: 5px;
+    }
+	
+	#catTreeDiv {background: #fff; margin-top:1em; padding:1em; min-height:7em;}
+
+</style>
+
+<%= javascript_include_tag 'yui/general/yuiloader-beta'%>
+<%= javascript_include_tag 'yui/general/event'%>
+<%= javascript_include_tag 'yui/general/connection'%>
+<%= javascript_include_tag 'yui/general/dom'%>
+<%= javascript_include_tag 'yui/general/dragdrop'%>
+<%= javascript_include_tag 'yui/general/container'%>
+
+<%= javascript_include_tag 'yui/general/yahoo-dom-event'%>
+<%= javascript_include_tag 'yui/general/container_core'%>
+<%= javascript_include_tag 'yui/general/element-beta'%>
+<%= javascript_include_tag 'yui/general/button'%>
+
+<%= javascript_include_tag 'yui/treeview/treeview'%>
+<%= javascript_include_tag 'yui/calendar/calendar'%>
+
+<%= javascript_include_tag 'ksiega_calendar'%>
+<%= javascript_include_tag 'ksiega_categories'%>
+
+<script type="text/javascript">
+<!--
+	var catDialog = null;
+	
+	function submitCategories(id, name){
+		if (id && id != "") {
+			document.getElementById("category_id").value = id;
+			document.getElementById("categoryName").innerHTML = name;
+		}
+		else{
+			document.getElementById("category_id").value = '';
+			document.getElementById("categoryName").innerHTML = "<i>-Wybierz kategorię-</>";
+		}
+	}
+
+	function showDialog(){
+		catDialog.show();
+	}
+
+	function hideDialog(){
+		catDialog.hide();
+	}
+	
+	function accountChanged(){
+		updateAccountInfo();
+	}
+	
+	function amountChanged(){
+		updateAccountInfo();
+	}
+	
+	function updateAccountInfo(){
+		hideServerError();
+		document.getElementById('currentAmount').innerHTML = '';
+		document.getElementById('currentAmount').innerHTML = '';	
+		
+		var accountId = document.forms['newcash'].account_id.value;
+		var newAmount = document.forms['newcash'].amount.value;
+		if(accountId.match(/^\s*$/)){
+			return;			
+		}
+		
+		var callback = { 
+			success: function(o) {
+				var resp = o.responseText;
+				if(isNaN(resp) || Number(resp) >= 0){
+					var splited = resp.split("|");
+					setColored('currentAmount', splited[0]);
+					if(!newAmount.match(/^\s*$/))
+						setColored('diffAmount', splited[1]);
+					else
+						setColored('diffAmount', "");
+				}
+				else{
+					if(Number(resp) == -1){
+						showServerError("Błąd! Nie znaleziono konta!");	
+					}		
+					else{
+						showServerError("Błąd! Ogólny błąd systemu!");	
+					}
+				}
+			  }, 
+			  failure: function(o) {
+			  	showServerError("Błąd połączenia z serwerem ("+o.statusText+")!");	
+			  }, 
+			  argument: []
+		}
+				
+		var url = '/ajax/getAccountInfo?accountId='+accountId+'&newAmount='+encodeURI(newAmount);
+		var transaction = YAHOO.util.Connect.asyncRequest('GET', url, callback, null);  
+	}
+	
+	function showServerError(err){
+		var errorSpan = document.getElementById('errors');
+		errorSpan.style.display = "";
+		errorSpan.innerHTML = err;
+	}
+	
+	function hideServerError(){
+		var errorSpan = document.getElementById('errors');
+		errorSpan.style.display = "none";
+	}
+	
+	function setColored(spanId, amount){
+		var s = document.getElementById(spanId);
+		s.innerHTML = amount;
+		if(!isNaN(amount) && Number(amount) >= 0){
+			s.style.color = "green";
+		}
+		else{
+			s.style.color = "red";
+		}		
+	}
+
+	YAHOO.util.Event.onDOMReady(function () {
+		createCalendar('trans_date', 'Wybierz datę', 'menubutton');
+		catDialog = createCategoryPanel(submitCategories)[0];
+	})
+//-->
+</script>
+
+<%= render_partial "category_dialog" %>
+
+<div class="title">Aktualizacja stanu konta</div>
+
+<% form_tag({:action => 'update_cash'}, :name => 'newcash') do %>
+  <table class="form_table">
+	<tr>
+		<td colspan="2" style="color: red;">
+			&nbsp;
+			<% if flash[:notice] %>
+				<%= flash[:notice] %>
+			<% end %>
+		</td>
+	</tr>
+	<tr>
+	  <td class="header">Wybierz konto</td>
+	  <td class="content">
+	  	<select name="account_id" onchange="javascript:accountChanged();">
+			<option value=""></option>
+			<% for acc in @accounts %>
+				<option value="<%= acc.id %>"><%= acc.name %></option>
+			<%end%>
+		</select>
+	  </td>
+	</tr>
+	<tr>
+	  <td class="header">Aktualny stan konta</td>
+	  <td class="content">
+	  	<input name="amount" type="text" onchange="amountChanged();"/>
+	  </td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<table style="width:100%;">
+				<tr>
+					<td style="width: 50%;">
+						Aktualny stan:&nbsp;&nbsp;<span id="currentAmount"></span>		
+					</td>	
+					<td style="width: 50%;">
+						Różnica:&nbsp;&nbsp;<span id="diffAmount"></span>		
+					</td>	
+				</tr>
+				<tr>
+					<td colspan="2"  id="errors" style="display: none; font-color: red;">
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>		
+	<tr>
+		<td>&nbsp;</td>
+	</tr>		
+
+	<tr>
+	  <td class="header">Nazwa transakcji</td>
+	  <td class="content">
+	     <input name="trans_name" type="text"/>
+	  </td>
+	</tr>
+	<tr>
+	  <td class="header">Kategoria transakcji</td>
+	  <td class="content">
+	  	 <input name="category_id" id="category_id" type="hidden"/>
+	     <table style="width: 100%;">
+	     	<tr>
+	     		<td id="categoryName">
+				</td>		
+				<td style="text-align: right;"><a href="javascript:showDialog();">Wybierz</a></td>
+	      	</tr>
+		 </table>
+	  </td>
+	</tr>
+	<tr>
+	  <td class="header">Date</td>
+	  <td class="content">
+	  		<input name="trans_date" type="text" size="10" maxlength="10"/>
+			<span id="trans_dateCalendar"></span>
+	  </td>
+	</tr>
+  <table>
+  <br>
+  <%= submit_tag "Aktualizuj" %>
+<% end %>

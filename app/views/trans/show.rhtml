@@ -1,0 +1,316 @@
+<%= stylesheet_link_tag 'yui/calendar'%>
+<%= stylesheet_link_tag 'yui/container'%>
+<%= stylesheet_link_tag 'yui/button'%>
+<%= stylesheet_link_tag 'yui/treeview'%>
+
+<style type="text/css">
+	#catTreeDiv {background: #fff; margin-top:1em; padding:1em; min-height:7em;}
+	
+	#transDate button
+	{
+    	background:url(/images/calbtn.gif) center center no-repeat;
+		text-align: left;
+        text-indent: -10em;
+        overflow: hidden;
+        white-space: nowrap;
+        width: 21px;
+        margin-right: 5px;
+    }
+
+</style>
+
+<%= javascript_include_tag 'yui/general/yuiloader-beta'%>
+<%= javascript_include_tag 'yui/general/event'%>
+<%= javascript_include_tag 'yui/general/connection'%>
+<%= javascript_include_tag 'yui/general/dom'%>
+<%= javascript_include_tag 'yui/general/dragdrop'%>
+<%= javascript_include_tag 'yui/general/container'%>
+
+<%= javascript_include_tag 'yui/general/yahoo-dom-event'%>
+<%= javascript_include_tag 'yui/general/container_core'%>
+<%= javascript_include_tag 'yui/general/element-beta'%>
+<%= javascript_include_tag 'yui/general/button'%>
+
+<%= javascript_include_tag 'yui/treeview/treeview'%>
+<%= javascript_include_tag 'yui/calendar/calendar'%>
+
+<%= javascript_include_tag 'ksiega_calendar'%>
+<%= javascript_include_tag 'ksiega_categories'%>
+
+<script type="text/javascript">
+<!--
+	var catDialog = null;
+	var calButton = null;
+	
+	function submitCategory(id, name){
+		catDialog.hide();
+		if(confirm('Zmienić kategorię transakcji na '+name+'?')){
+			var callback = { 
+				  success: function(o) {
+					var resp = o.responseText;
+					if(isNaN(resp) || Number(resp) >= 0){
+					  	document.getElementById('catStatus').innerHTML = 'Zmieniono kategorię.';
+						document.getElementById('cat').innerHTML = resp;	
+					}
+					else{
+						if(Number(resp) == -1){
+							document.getElementById('catStatus').innerHTML = "Błąd! Nie znaleziono transakcji lub kategorii!";	
+						}		
+						else if(Number(resp == -2)){
+							document.getElementById('catStatus').innerHTML = "Błąd bazy danych!";	
+						}
+						else{
+							document.getElementById('catStatus').innerHTML = "Nieznany błąd ("+resp+")!";		
+						}
+					}
+				  }, 
+				  failure: function(o) {
+				  	document.getElementById('catStatus').innerHTML = 'Nie udało się zmienić kategorii ('+o.statusText+')!';
+				  }, 
+				  argument: [] 
+				}
+				
+			document.getElementById('catStatus').innerHTML = 'Proszę czekać...';
+			
+			var url = '/ajax/changeTransCat?transId=<%= @trans.id%>&newCatId='+id;
+			var transaction = YAHOO.util.Connect.asyncRequest('GET', url, callback, null);  			
+		}
+	}
+
+	function showDialog(){
+		catDialog.show();
+	}
+
+	function hideDialog(){
+		catDialog.hide();
+	}
+	
+	function changeName(){
+		var newName = prompt("Nowa nazwa transakcji:", '<%= @trans.name %>');
+		if(newName.match(/^\s*$/)){
+			alert('Nie podano nazwy!');
+			return;
+		}
+		
+		var callback = { 
+			success: function(o) {
+				var resp = o.responseText;
+				if(isNaN(resp) || Number(resp) >= 0){
+				  	document.getElementById('nameStatus').innerHTML = 'Zmieniono nazwę.';
+					document.getElementById('transName').innerHTML = resp;	
+				}
+				else{
+					if(Number(resp) == -1){
+						document.getElementById('nameStatus').innerHTML = "Błąd! Nie znaleziono transakcji!";	
+					}		
+					else if(Number(resp == -2)){
+						document.getElementById('nameStatus').innerHTML = "Błąd bazy danych!";	
+					}
+					else{
+						document.getElementById('nameStatus').innerHTML = "Nieznany błąd ("+resp+")!";		
+					}
+				}
+			  }, 
+			  failure: function(o) {
+				document.getElementById('nameStatus').innerHTML = 'Nie udało się zmienić nazwy ('+o.statusText+')!';
+			  }, 
+			  argument: [] 
+		}
+				
+		document.getElementById('nameStatus').innerHTML = 'Proszę czekać...';
+			
+		var url = '/ajax/changeTransName?transId=<%= @trans.id%>&newName='+encodeURI(newName);
+		var transaction = YAHOO.util.Connect.asyncRequest('GET', url, callback, null);  
+	}
+
+	function changeAmount(){
+		var newAmount = prompt("Nowa kwota transakcji:", '<%= @trans.amount %>');
+		if(newAmount.match(/^\s*$/) || isNaN(newAmount)){
+			alert('Niepoprawna kwota!');
+			return;
+		}
+		
+		var callback = { 
+			success: function(o) {
+				var resp = o.responseText;
+				if(isNaN(resp) || Number(resp) >= 0){
+				  	document.getElementById('amountStatus').innerHTML = 'Zmieniono kwotę.';
+					document.getElementById('transAmount').innerHTML = resp;	
+				}
+				else{
+					if(Number(resp) == -1){
+						document.getElementById('amountStatus').innerHTML = "Błąd! Nie znaleziono transakcji!";	
+					}		
+					else if(Number(resp == -2)){
+						document.getElementById('amountStatus').innerHTML = "Błąd bazy danych!";	
+					}
+					else{
+						document.getElementById('amountStatus').innerHTML = "Nieznany błąd ("+resp+")!";		
+					}
+				}
+			  }, 
+			  failure: function(o) {
+				document.getElementById('amountStatus').innerHTML = 'Nie udało się zmienić kwoty ('+o.statusText+')!';
+			  }, 
+			  argument: [] 
+		}
+				
+		document.getElementById('amountStatus').innerHTML = 'Proszę czekać...';
+			
+		var url = '/ajax/changeTransAmount?transId=<%= @trans.id%>&newAmount='+encodeURI(newAmount);
+		var transaction = YAHOO.util.Connect.asyncRequest('GET', url, callback, null);  
+	}
+	
+	function showCalendar(){
+		alert('tu, calButton = '+calButton);
+		alert('tu, calButton.fireEvent = '+onButtonClick);
+		calButton.onButtonClick();;
+	}
+
+	function changeDate(newDate){
+		if(confirm('Zmienić datę transakcji na '+newDate+'?')){
+			var callback = { 
+				  success: function(o) {
+					var resp = o.responseText;
+					if(isNaN(resp) || Number(resp) >= 0){
+					  	document.getElementById('dateStatus').innerHTML = 'Zmieniono datę.';
+						document.getElementById('date').innerHTML = resp;	
+					}
+					else{
+						if(Number(resp) == -1){
+							document.getElementById('dateStatus').innerHTML = "Błąd! Nie znaleziono transakcji!";	
+						}		
+						else if(Number(resp == -2)){
+							document.getElementById('dateStatus').innerHTML = "Błąd bazy danych!";	
+						}
+						else{
+							document.getElementById('dateStatus').innerHTML = "Nieznany błąd ("+resp+")!";		
+						}
+					}
+				  }, 
+				  failure: function(o) {
+				  	document.getElementById('dateStatus').innerHTML = 'Nie udało się zmienić daty ('+o.statusText+')!';
+				  }, 
+				  argument: [] 
+				}
+				
+			document.getElementById('dateStatus').innerHTML = 'Proszę czekać...';
+			
+			var url = '/ajax/changeTransDate?transId=<%= @trans.id%>&newDate='+newDate;
+			var transaction = YAHOO.util.Connect.asyncRequest('GET', url, callback, null);  			
+		}
+	}
+
+	YAHOO.util.Event.onDOMReady(function () {
+		catDialog = createCategoryPanel(submitCategory)[0];
+		calButton = createCalendar('transDate', 'Wybierz datę', 'menubutton', changeDate);
+	})
+	
+//-->
+</script>
+
+<%= render_partial "category_dialog" %>
+
+<div class="title">Szczegóły transakcji</div>
+
+<%= link_to "Dodaj zwrot", {:action => "newReturn", :id => @trans} %>
+<%= link_to 'Usuń', {:action => 'delete', :id => @trans}, :confirm => "Jesteś pewien?" %>
+<%= link_to 'Powrót', :action => 'back' %>
+<br>
+<br>
+
+<table class="details_table" style="width: 100%;">
+  <tr>
+    <td class="header" style="width: 10%;">Id</td>
+    <td class="content" style="text-align: right; width: 30%;"><%= @trans.id%></td>
+	<td style="width: 60%;"></td>
+  </tr>
+  <tr>
+    <td class="header">Nazwa</td>
+    <td id="transName" class="content"><%= @trans.name%></td>
+	<td>
+		<a href="javascript:changeName();">zmień</a>
+		<span id="nameStatus" style="padding-left: 10px;"></span>
+	</td>
+  </tr>
+  <tr>
+    <td class="header">Kategoria</td>
+    <td class="content">
+    	<div id="cat">
+    		<%= @trans.category.getPath() if @trans.category%>
+    	</div>
+	</td>
+	<td>
+		<a href="javascript:showDialog();">zmień</a>
+		<span id="catStatus" style="padding-left: 10px;"></span>
+	</td>
+  </tr>
+  <tr>
+    <td class="header">Kwota</td>
+    <td id="transAmount" class="content" style="text-align: right;"><%= sprintf("%.2f", @trans.realAmount)%></td>
+	<td>
+		<a href="javascript:changeAmount();">zmień</a>
+		<span id="amountStatus" style="padding-left: 10px;"></span>
+	</td>
+  </tr>
+  <tr>
+    <td class="header">Data</td>
+    <td id="date" class="content"><%= date_format(@trans.trans_date)%></td>
+	<td>
+		<span id="transDateCalendar"></span>
+		<span id="dateStatus" style="padding-left: 10px;"></span>
+	</td>
+  </tr>
+  <tr>
+    <td class="header">Z konta</td>
+    <td class="content">&lt;&lt;
+		<%= @trans.sourceAccount.name if @trans.sourceAccount%>
+		<%= link_to('pokaż', :controller => 'account', :action => 'show', :id => @trans.sourceAccount.id) if @trans.sourceAccount  %>
+	</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td class="header">Na konto</td>
+    <td class="content">&gt;&gt;
+		<%= @trans.destAccount.name if @trans.destAccount%>
+		<%= link_to('pokaż', :controller => 'account', :action => 'show', :id => @trans.destAccount.id) if @trans.destAccount  %>
+	</td>
+	<td></td>
+  </tr>
+<table>
+	
+<br><br>
+
+<%
+	currentAmount = @trans.amount
+%>
+
+<table class="list_table">
+	<tr>
+		<th colspan="3" class="header">Zwroty</th>
+	</tr>
+	<% if @trans.return_trans.empty? %>
+	<tr>
+		<td colspan="3">Brak zwrotów.</td>
+	</tr>
+	<% end %>
+	<% if !@trans.return_trans.empty? %>
+		<tr>
+	    	<th>Data</th>
+	    	<th>Kwota</th>
+	    	<th>Po zwrocie</th>
+		</tr>
+		<% for zwrot in @trans.return_trans %>
+			<tr>
+				<td class="content"><%= date_format(zwrot.trans_date)%></td>			
+				<td class="content" style="text-align: right;"><%= zwrot.amount%></td>		
+				<td class="content" style="text-align: right;">
+					<%
+						currentAmount = currentAmount - zwrot.amount
+					%>
+					<%= currentAmount%>
+				</td>	
+			</tr>
+		<% end %>
+	<% end %>
+</table>

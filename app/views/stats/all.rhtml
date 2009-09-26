@@ -1,0 +1,116 @@
+<script>
+	var parentCatIds = new Array();
+	
+	function reload(catId){
+	  tmp = findSWF("chart_graph03");
+	  tmp.reload("/chart/graph03?categoryId="+catId+getCatParams());
+	  
+	  parentCatIds.push(catId);
+	}
+	
+	function refreshCats(){
+		tmp = findSWF("chart_graph03");
+		id = parentCatIds.pop()
+		if (id) {
+			tmp.reload("/chart/graph03?categoryId=" + id + getCatParams());
+		}
+		else {
+			tmp.reload("/chart/graph03"+getCatParams().replace(/^&/, "?"));
+		}
+	}
+	
+	function getCatParams(){
+		var catParams = '';
+		
+		dateFrom =  document.getElementById("date_from").value;
+	  	dateTo =  document.getElementById("date_to").value;
+		if(dateFrom.match(/^\d\d-\d\d-\d\d\d\d$/)){
+	  		catParams = catParams + "&dateFrom="+dateFrom;
+	  	}
+		if(dateTo.match(/^\d\d-\d\d-\d\d\d\d$/)){
+	  		catParams = catParams + "&dateTo="+dateTo;
+	  	}
+		
+		return catParams;
+	}
+
+	function findSWF(movieName) {
+	  if (navigator.appName.indexOf("Microsoft")!= -1) {
+    	return window["ie_" + movieName];
+	  } else {
+    	return document[movieName];
+	  }
+	}
+	
+	function showParentCat(){
+		tmp = findSWF("chart_graph03");
+		id = parentCatIds.pop()
+		if (id) {
+			tmp.reload("/chart/graph03?parentCatId=" + id + getCatParams());
+		}
+		else {
+			tmp.reload("/chart/graph03"+getCatParams().replace(/^&/, "?"));
+		}
+	}
+</script>
+
+<%= javascript_include_tag 'swfobject.js'%>
+
+<div class="title">Statystyki</div>
+<br>
+
+<table style="width: 100%;">
+	<tr>
+		<td style="width: 50%;">
+			<%= @graph01%>
+		</td>
+		<td style="width: 50%;">
+			<%= @graph02 %>
+		</td>
+	</tr>
+</table>
+
+<br>
+
+<table style="width: 100%;">
+	<tr>
+	  <td style="vertical-align: top;">
+		<div>Wydatki w ostatnich 6-ciu miesiącach</div>
+
+		<table class="list_table">
+		  <tr>
+		    <th>miesiąc</th>
+		    <th>przychody</th>
+		    <th>wydatki</th>
+		    <th>saldo</th>
+		  </tr>
+		<% keys = @inout.keys.sort{|a, b| b <=> a} 
+		   for key in keys %>
+		   <tr>
+		     <td style="text-align: right;"><%= date_month_format(key) %></td>
+		     <td style="text-align: right;"><%= (@inout[key])[0]%></td>
+		     <td style="text-align: right;"><%= (@inout[key])[1]%></td>
+		     <td style="text-align: right;"><%= (@inout[key])[0] - (@inout[key])[1]%></td>
+		   </tr>
+		<% end %>
+		</table>
+	  </td>
+	  <td>
+	  	<%= @graph03 %>		
+		<br>
+		<table style="width: 100%;">
+	  		<tr>
+	  			<td>
+					Data od <input name="date_from" id="date_from" type="text" size="10" maxlength="10">
+					do <input name="date_to" id="date_to" type="text" size="10" maxlength="10">	  		
+					<input type="button" onclick="javascript:refreshCats();" value="Pokaż"/>		
+	  			</td>
+				<td style="text-align: right;">
+					<a href="javascript:showParentCat();">Powrót</a>
+				</td>
+	  		</tr>
+	  	</table>
+		<br>
+	  </td>
+	</tr>
+</table>

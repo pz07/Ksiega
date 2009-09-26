@@ -1,0 +1,150 @@
+<%= stylesheet_link_tag 'yui/calendar'%>
+<%= stylesheet_link_tag 'yui/container'%>
+<%= stylesheet_link_tag 'yui/button'%>
+<%= stylesheet_link_tag 'yui/treeview'%>
+
+<style type="text/css">
+
+	#trans_form\[dateFrom\] button, 
+	#trans_form\[dateTo\] button
+	{
+    	background:url(/images/calbtn.gif) center center no-repeat;
+	    text-align: left;
+        text-indent: -10em;
+        overflow: hidden;
+        white-space: nowrap;
+        width: 21px;
+        margin-right: 5px;
+    }
+	
+	#catTreeDiv {background: #fff; margin-top:1em; padding:1em; min-height:7em;}
+
+</style>
+
+<%= javascript_include_tag 'yui/general/yuiloader-beta'%>
+<%= javascript_include_tag 'yui/general/event'%>
+<%= javascript_include_tag 'yui/general/connection'%>
+<%= javascript_include_tag 'yui/general/dom'%>
+<%= javascript_include_tag 'yui/general/dragdrop'%>
+<%= javascript_include_tag 'yui/general/container'%>
+
+<%= javascript_include_tag 'yui/general/yahoo-dom-event'%>
+<%= javascript_include_tag 'yui/general/container_core'%>
+<%= javascript_include_tag 'yui/general/element-beta'%>
+<%= javascript_include_tag 'yui/general/button'%>
+
+<%= javascript_include_tag 'yui/treeview/treeview'%>
+<%= javascript_include_tag 'yui/calendar/calendar'%>
+
+<%= javascript_include_tag 'ksiega_calendar'%>
+<%= javascript_include_tag 'ksiega_categories'%>
+
+<script type="text/javascript">
+<!--
+	var catDialog = null;
+	
+	function submitCategories(id, name){
+		if (id && id != "") {
+			document.getElementById("trans_form_category_id").value = id;
+			document.getElementById("categoryName").innerHTML = name;
+		}
+		else{
+			document.getElementById("trans_form_category_id").value = '';
+			document.getElementById("categoryName").innerHTML = "<i>-Wybierz kategorię-</>";
+		}
+	}
+
+	function showDialog(){
+		catDialog.show();
+	}
+
+	function hideDialog(){
+		catDialog.hide();
+	}
+
+	YAHOO.util.Event.onDOMReady(function () {
+		createCalendar('trans_form[dateFrom]', 'Wybierz datę', 'menubutton');
+		createCalendar('trans_form[dateTo]', 'Wybierz datę', 'menubutton');
+		catDialog = createCategoryPanel(submitCategories)[0];
+	})
+//-->
+</script>
+
+<div class="title">Wyszukiwanie transakcji - formularz</div>
+
+<% form_tag({:action => 'list'}) do %>
+  <table class="form_table">
+    <tr>
+      <td class="header">Nazwa transakcji</td>
+      <td class="content">
+        <%= text_field 'trans_form', 'name' %>
+      </td>
+    </tr>
+    <tr>
+      <td class="header">Kategoria</td>
+      <td class="content">
+      	<%= hidden_field 'trans_form', 'category_id' %>
+      	<table style="width: 100%;">
+      		<tr>
+      			<td id="categoryName"><i>-Wybierz kategorię-</></td>		
+				<td style="text-align: right;"><a href="javascript:showDialog();">Wybierz</a></td>
+      		</tr>
+		</table>
+      </td>
+    </tr>
+    <tr>
+      <td class="header">Kwota od</td>
+      <td class="content">
+      	<%= text_field 'trans_form', 'amountFrom', {:size => 10, :maxlength => 10}%>
+      </td>
+    </tr>
+    <tr>
+      <td class="header">Kwota do</td>
+      <td class="content">
+      	<%= text_field 'trans_form', 'amountTo', {:size => 10, :maxlength => 10}%>
+      </td>
+    </tr>
+    <tr>
+      <td class="header">Data od</td>
+      <td class="content">
+      	<%= text_field 'trans_form', 'dateFrom', {:size => 10, :maxlength => 10}%>
+		<span id="trans_form[dateFrom]Calendar"></span>
+      </td>
+    </tr>
+    <tr>
+      <td class="header">Data do</td>
+      <td class="content">
+      	<%= text_field 'trans_form', 'dateTo', {:size => 10, :maxlength => 10}%>
+		<span id="trans_form[dateTo]Calendar"></span>
+      </td>
+    </tr>
+	<tr>
+	  <td class="header">Z konta</td>
+	  <td class="content">
+	  	<select name="trans_form[source_account_id]">
+	  		<option value="">-Wybierz konto-</option>
+			<option value="nil">-Brak konta-</option>
+			<% for account in @accounts %>
+				<option value="<%=account.id%>"><%=account.name%></option>
+			<%end%>
+	  	</select>
+	  </td>
+	</tr>
+	<tr>
+	  <td class="header">Na konto</td>
+	  <td class="content">
+	  	<select name="trans_form[dest_account_id]">
+	  		<option value="">-Wybierz konto-</option>
+			<option value="nil">-Brak konta-</option>
+			<% for account in @accounts %>
+				<option value="<%=account.id%>"><%=account.name%></option>
+			<%end%>
+	  	</select>
+	  </td>
+	</tr>
+  </table>
+  <br>
+  <%= submit_tag 'Akceptuj' %>
+<% end %>
+
+<%= render_partial "category_dialog" %>

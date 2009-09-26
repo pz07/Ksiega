@@ -1,0 +1,93 @@
+.title{
+	font-size: 14pt;
+	font-weight: bold;
+	color: #333333;
+	padding-top: 5px;
+	padding-bottom: 10px;
+}
+
+.list_table{
+	border: 1px solid black;
+} 
+.list_table tr{
+	border: 1px solid black;
+}
+.list_table tr th{
+	border: 0px;
+	background-color: #AAAAAA;
+
+	padding: 0px 8px 0px 8px;
+	margin: 0px;
+}
+.list_table tr td{
+	border: 0px;
+	background-color: #DDDDDD;
+
+	padding: 0px 8px 0px 8px;
+	margin: 0px;
+}
+
+.details_table{
+	border: 0px;
+} 
+.details_table tr{
+	border: 1px solid black;
+}
+.details_table tr td.header{
+	border: 0px;
+	background-color: #AAAAAA;
+	
+	padding: 0px 8px 0px 8px;
+	margin: 0px;
+}
+.details_table tr td.content{
+	border: 0px;
+	background-color: #DDDDDD;
+
+	padding: 0px 8px 0px 8px;
+	margin: 0px;
+
+	font-weight: bold;
+}
+
+.form_table{
+	border: 0px;
+} 
+.form_table tr{
+	border: 0;
+}
+.form_table tr td.header{
+	border: 1px solid black;
+	background-color: #BBBBBB;
+	
+	padding: 0px 8px 0px 8px;
+	margin: 0px;
+}
+.form_table tr td.content{
+	border: 0px;
+	background-color: white;
+
+	padding: 0px 8px 0px 8px;
+	margin: 0px;
+
+	font-weight: bold;
+}
+
+input {
+	border: 1px solid black;
+}
+
+select {
+	border: 1px solid black;
+}
+
+a {
+	color: blue;
+	font-size: 8pt;
+	font-weight: bold;
+}
+
+.checkedLabel{
+	background-color: yellow;
+}
+	

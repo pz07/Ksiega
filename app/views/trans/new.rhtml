@@ -1,0 +1,83 @@
+<%= stylesheet_link_tag 'yui/calendar'%>
+<%= stylesheet_link_tag 'yui/container'%>
+<%= stylesheet_link_tag 'yui/button'%>
+<%= stylesheet_link_tag 'yui/treeview'%>
+
+<style type="text/css">
+
+	#trans\[trans_date\] button
+	{
+    	background:url(/images/calbtn.gif) center center no-repeat;
+	    text-align: left;
+        text-indent: -10em;
+        overflow: hidden;
+        white-space: nowrap;
+        width: 21px;
+        margin-right: 5px;
+    }
+	
+	#catTreeDiv {background: #fff; margin-top:1em; padding:1em; min-height:7em;}
+
+</style>
+
+<%= javascript_include_tag 'yui/general/yuiloader-beta'%>
+<%= javascript_include_tag 'yui/general/event'%>
+<%= javascript_include_tag 'yui/general/connection'%>
+<%= javascript_include_tag 'yui/general/dom'%>
+<%= javascript_include_tag 'yui/general/dragdrop'%>
+<%= javascript_include_tag 'yui/general/container'%>
+
+<%= javascript_include_tag 'yui/general/yahoo-dom-event'%>
+<%= javascript_include_tag 'yui/general/container_core'%>
+<%= javascript_include_tag 'yui/general/element-beta'%>
+<%= javascript_include_tag 'yui/general/button'%>
+
+<%= javascript_include_tag 'yui/treeview/treeview'%>
+<%= javascript_include_tag 'yui/calendar/calendar'%>
+
+<%= javascript_include_tag 'ksiega_calendar'%>
+<%= javascript_include_tag 'ksiega_categories'%>
+
+<script type="text/javascript">
+<!--
+	var catDialog = null;
+	
+	function submitCategories(id, name){
+		if (id && id != "") {
+			document.getElementById("trans_category_id").value = id;
+			document.getElementById("categoryName").innerHTML = name;
+		}
+		else{
+			document.getElementById("trans_category_id").value = '';
+			document.getElementById("categoryName").innerHTML = "<i>-Wybierz kategorię-</>";
+		}
+	}
+
+	function showDialog(){
+		catDialog.show();
+	}
+
+	function hideDialog(){
+		catDialog.hide();
+	}
+
+	YAHOO.util.Event.onDOMReady(function () {
+		createCalendar('trans[trans_date]', 'Wybierz datę', 'menubutton');
+		catDialog = createCategoryPanel(submitCategories)[0];
+	})
+//-->
+</script>
+
+<%= render_partial "category_dialog" %>
+
+<div class="title">Nowa transakcja</div>
+
+<% form_tag({:action => 'create'}) do %>
+  <table class="form_table">
+    <%= render_partial "form" %>
+  <table>
+  <br>
+  <%= submit_tag "Dodaj" %>
+<% end %>
+
+
