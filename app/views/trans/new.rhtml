@@ -68,13 +68,13 @@
 //-->
 </script>
 
-<%= render_partial "category_dialog" %>
+<%= render :partial => "category_dialog" %>
 
 <div class="title">Nowa transakcja</div>
 
 <% form_tag({:action => 'create'}) do %>
   <table class="form_table">
-    <%= render_partial "form" %>
+    <%= render :partial => "form" %>
   <table>
   <br>
   <%= submit_tag "Dodaj" %>
