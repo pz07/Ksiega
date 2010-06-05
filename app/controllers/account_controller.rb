@@ -14,9 +14,6 @@ class AccountController < ApplicationController
 	def show
     setBackLink 
 		@account = Account.find(params[:id])
-    
-    @inTranss_pages, @inTranss = paginate(:Transs, :parameter => 'pageIn', :conditions => "dest_account_id = #{@account.id}", :order => "trans_date desc")
-    @outTranss_pages, @outTranss = paginate(:Transs, :parameter => 'pageOut', :conditions => "source_account_id = #{@account.id}", :order => "trans_date desc")
 	end
 
 	def new

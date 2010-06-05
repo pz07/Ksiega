@@ -4,10 +4,10 @@
 <br>
 <br>
 
-<%= start_form_tag :action => 'update', :id => @account %>
+<% form_tag({:action => 'update', :id => @account}) do %>
   <table class="form_table">
     <%= render :partial => "form" %>
   <table>
   <br>
   <%= submit_tag "Modyfikuj" %>
-<%= end_form_tag %>
+<% end %>
