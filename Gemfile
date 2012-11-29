@@ -1,4 +1,5 @@
 source "https://rubygems.org"
+source "http://gems.github.com"
 ruby "1.8.7"
 
 gem 'pg'
