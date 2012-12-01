@@ -1,1 +1,5 @@
 log
+temp
+.project
+.loadpath
+config/database.yml
