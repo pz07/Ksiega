@@ -38,12 +38,12 @@ production:
   api_key: 054f2060bd08b3d45936501ff38544db
   secret_key: c8cef61589f3cceda946ed1b6fcbc17e
   canvas_page_name:
-  callback_url: http://localhost:3000
+  callback_url: http://ksiega.herokuapp.com
   pretty_errors: true
   set_asset_host_to_callback_url: true
   tunnel:
     public_host_username:
     public_host:
     public_port: 4007
-    local_port: 3000
+    local_port: 80
     server_alive_interval: 0
