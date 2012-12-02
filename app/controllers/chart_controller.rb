@@ -1,10 +1,12 @@
 class ChartController < ApplicationController
+  before_filter :require_user
+
   require 'open_flash_chart'
   require 'stats_utils'
   require 'format_utils'
 
   def graph01
-    inoutData = StatsUtils.getLastInOut
+    inoutData = StatsUtils.getLastInOut(current_user.id)
     
     inData = Array.new
     outData = Array.new
@@ -45,7 +47,7 @@ class ChartController < ApplicationController
   end
 
   def graph02
-    inoutData = StatsUtils.getLastInOut
+    inoutData = StatsUtils.getLastInOut(current_user.id)
     
     labels = Array.new
     data = Array.new
@@ -84,7 +86,7 @@ class ChartController < ApplicationController
     
     parentCatId = params["parentCatId"]
     if parentCatId != nil
-      tempParentCat = Category.find(parentCatId)
+      tempParentCat = Category.find_by_id_and_user_id(parentCatId, current_user.id)
       if tempParentCat == nil or tempParentCat.parent == nil
         crit = "parent_id is null"
       else
@@ -97,7 +99,7 @@ class ChartController < ApplicationController
       if catId == nil
         crit = "parent_id is null";
       else
-        parentCat = Category.find(catId)
+        parentCat = Category.find_by_id_and_user_id(catId, current_user.id)
         if parentCat == nil
           crit = "parent_id is null";
         else
@@ -110,7 +112,7 @@ class ChartController < ApplicationController
     dateFrom = params["dateFrom"]
     dateTo = params["dateTo"]
     
-    cats = Category.find(:all, :conditions => crit)
+    cats = Category.find_all_by_user_id(current_user.id, :conditions => crit)
     
     labels = Array.new
     values = Array.new
@@ -158,7 +160,7 @@ class ChartController < ApplicationController
         crit = crit + " and trans_date <= '#{format_db_date(Date.parse(dateTo))}'"
       end
       
-      trans = Trans.find(:all, :conditions => crit)
+      trans = Trans.find_all_by_user_id(current_user.id, :conditions => crit)
       for t in trans
         amount = amount + t.realAmount
       end

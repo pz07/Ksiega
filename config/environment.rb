@@ -28,9 +28,9 @@ Rails::Initializer.run do |config|
 
   # Use the database for sessions instead of the file system
   # (create the session table with 'rake db:sessions:create')
-  # config.action_controller.session_store = :active_record_store
+  config.action_controller.session_store = :active_record_store
 
-  config.action_controller.session = { :session_key => "_myapp_session", :secret => "some secret phrase of at least 30 characters" }
+  config.action_controller.session = { :key => "_myapp_session", :secret => "secret0101secret0101secret0101secret0101" }
 
   # Use SQL instead of Active Record's schema dumper when creating the test database.
   # This is necessary if your schema can't be completely dumped by the schema dumper, 
@@ -45,6 +45,13 @@ Rails::Initializer.run do |config|
 
   config.active_record.pluralize_table_names = false
   
+  config.gem "authlogic"
+  
+  config.gem "facebooker"
+  
+  config.gem 'gravtastic', :version => '= 2.1.0'
+  
+  config.gem "rack-openid", :lib => 'rack/openid', :version => '>=0.2.1'
   # See Rails::Configuration for more options
 end
 

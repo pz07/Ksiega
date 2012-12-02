@@ -1,4 +1,5 @@
 class Category < ActiveRecord::Base
+  belongs_to :user, :class_name => 'User', :foreign_key => 'user_id'
 	belongs_to :parent, :class_name => 'Category', :foreign_key => 'parent_id'
   has_many :children, :class_name => 'Category', :foreign_key => 'parent_id'
 	

@@ -1,4 +1,6 @@
 class AccountController < ApplicationController
+	before_filter :require_user
+  
 	def index
 		list
 		render :action => 'list'
@@ -8,12 +10,12 @@ class AccountController < ApplicationController
     newBackLinks
     setBackLink
      
-		@accounts = Account.all(params['page'])
+		@accounts = Account.find_all_by_user_id(current_user.id, :order => "name")
 	end
 
 	def show
     setBackLink 
-		@account = Account.find(params[:id])
+		@account = Account.find_by_id_and_user_id(params[:id], current_user.id)
 	end
 
 	def new
@@ -23,6 +25,8 @@ class AccountController < ApplicationController
 
 	def create
 		@account = Account.new(params[:account])
+		@account.user_id = current_user.id
+		
 		if @account.save
 			flash['notice'] = 'Dodano nowe konto.'
       
@@ -35,11 +39,11 @@ class AccountController < ApplicationController
 
 	def edit
     setBackLink 
-		@account = Account.find(params[:id])
+		@account = Account.find_by_id_and_user_id(params[:id], current_user.id)
 	end
 
 	def update
-		@account = Account.find(params[:id])
+    @account = Account.find_by_id_and_user_id(params[:id], current_user.id)
 		if @account.update_attributes(params[:account])
 			flash['notice'] = 'Konto zostało uaktualnione';
       
@@ -51,7 +55,7 @@ class AccountController < ApplicationController
 	end
 
 	def destroy
-		Account.find(params[:id]).destroy
+    Account.find_by_id_and_user_id(params[:id], current_user.id).destroy
 
     setBackLink 
 		redirect_to :action => 'back'

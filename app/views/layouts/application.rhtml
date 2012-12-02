@@ -2,8 +2,16 @@
 <head>
   <title>KSIĘGA</title>
   <%= stylesheet_link_tag 'style' %>
+  <%= stylesheet_link_tag 'openid' %>
   <%= stylesheet_link_tag 'yui/fonts-min'%>
 
+  <%= javascript_include_tag 'jquery-1.2.6.min'%>
+  <%= javascript_include_tag 'openid-jquery'%>
+
+  <script>
+	jQuery.noConflict();
+  </script>
+  
   <style>
     .menu_link a{
       color: white;

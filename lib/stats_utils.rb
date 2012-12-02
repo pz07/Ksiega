@@ -1,10 +1,12 @@
 class StatsUtils
 
-  def StatsUtils.getLastInOut(mountsCount=7 )
+  def StatsUtils.getLastInOut(user_id, mountsCount=7 )
     #dochody i przychody przez ostatnie mountsCount miesięcy
     inout = Hash.new
 
     d_now = Date.today
+
+    d_max = Date.civil(d_now.year, d_now.month(), -1)
     d_first = (d_now.-(d_now.mday() -1));
     d_min = d_first.<<(mountsCount)
 
@@ -12,7 +14,7 @@ class StatsUtils
       inout[d_first<<(i-1)] = [0, 0]
     end
 
-    transes = Trans.find(:all, :conditions => "trans_date >= '#{d_min}' and trans_date <= '#{d_now}' and return_trans_id is null", :order => "trans_date desc")
+    transes = Trans.find_all_by_user_id(user_id, :conditions => "trans_date >= '#{d_min}' and trans_date <= '#{d_max}' and return_trans_id is null", :order => "trans_date desc")
     
     mon = nil
     transes.each do |t|

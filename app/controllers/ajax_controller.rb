@@ -1,11 +1,12 @@
 class AjaxController < ApplicationController
+  before_filter :require_user
 
   def getSubCategories
     categories = nil;
     if params["parentCatId"] == '0'
-      categories = Category.find(:all, :conditions => "parent_id is null", :order => "name asc")  
+      categories = Category.find_all_by_user_id_and_parent_id(current_user.id, nil, :order => "name asc")  
     else
-      categories = Category.find(:all, :conditions => "parent_id = #{params["parentCatId"]}", :order => "name asc")
+      categories = Category.find_all_by_user_id_and_parent_id(current_user.id, params["parentCatId"], :order => "name asc")
     end
     
     retString = ""
@@ -19,8 +20,8 @@ class AjaxController < ApplicationController
   
   def changeTransCat
     begin
-      trans = Trans.find(params[:transId])
-      newCat = Category.find(params[:newCatId])
+      trans = Trans.find_by_id_and_user_id(params[:transId], current_user.id)
+      newCat = Category.find_by_user_id_and_id(current_user.id, params[:newCatId])
       
       trans.category = newCat
       if trans.save
@@ -35,7 +36,7 @@ class AjaxController < ApplicationController
   
   def changeTransName
     begin
-      trans = Trans.find(params[:transId])
+      trans = Trans.find_by_id_and_user_id(params[:transId], current_user.id)
       newName = params[:newName]
       
       trans.name = newName
@@ -51,7 +52,7 @@ class AjaxController < ApplicationController
   
   def changeTransAmount
     begin
-      trans = Trans.find(params[:transId])
+      trans = Trans.find_by_id_and_user_id(params[:transId], current_user.id)
       newAmount = params[:newAmount].to_f
       
       Trans.transaction do
@@ -85,7 +86,7 @@ class AjaxController < ApplicationController
   
   def changeTransDate
     begin
-      trans = Trans.find(params[:transId])
+      trans = Trans.find_by_id_and_user_id(params[:transId], current_user.id)
       newDate = params[:newDate]
       
       trans.trans_date = newDate
@@ -101,7 +102,7 @@ class AjaxController < ApplicationController
   
   def getAccountInfo
     begin
-      account = Account.find(params[:accountId])
+      account = Account.find_by_id_and_user_id(params[:accountId], current_user.id)
       newAmount = params[:newAmount]
       
       render :text => account.balance.to_s+"|"+(newAmount.to_f - account.balance).to_s

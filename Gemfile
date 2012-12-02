@@ -6,3 +6,7 @@ gem 'pg'
 gem "rails", "2.3.14"
 gem 'thin'
 gem 'mislav-will_paginate'
+gem 'authlogic', '~> 2.0.14'
+gem "facebooker"
+gem 'gravtastic', '= 2.1.0'
+gem "rack-openid", '>=0.2.1'

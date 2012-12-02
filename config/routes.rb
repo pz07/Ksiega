@@ -9,13 +9,26 @@ ActionController::Routing::Routes.draw do |map|
   # map.purchase 'products/:id/purchase', :controller => 'catalog', :action => 'purchase'
   # This route can be invoked with purchase_url(:id => product.id)
 
+  map.resource :accounts
+  
+  map.resources :users
+  
+  map.resource :user_session
+  
+  map.resource :trans
+  
+  map.resource :stats, :controller => "stats"
+  
+  map.root :controller => "user_sessions", :action => "new"
+  
   # Allow downloading Web Service WSDL as a file with an extension
   # instead of a file named 'wsdl'
   map.connect ':controller/service.wsdl', :action => 'wsdl'
 
   #main page
-  map.connect '', :controller => 'stats', :action => 'all'
+  #map.connect '', :controller => 'stats', :action => 'all'
 
+  
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'

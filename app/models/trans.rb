@@ -1,6 +1,7 @@
 require "will_paginate"
 
 class Trans < ActiveRecord::Base
+  belongs_to :user, :class_name => 'User', :foreign_key => 'user_id'
 	belongs_to :sourceAccount, :class_name => 'Account', :foreign_key => 'source_account_id'
 	belongs_to :destAccount, :class_name => 'Account', :foreign_key => 'dest_account_id'
 	belongs_to :category, :class_name => 'Category', :foreign_key => 'category_id'
@@ -20,7 +21,7 @@ class Trans < ActiveRecord::Base
     return ra
   end
   
-  def self.search(searchCrit, order, page)
+  def self.search(user_id, searchCrit, order, page)
     paginate :per_page => 10, :page => page,
              :conditions => searchCrit, :order => order
   end

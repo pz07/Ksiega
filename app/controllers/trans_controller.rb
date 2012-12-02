@@ -1,4 +1,6 @@
 class TransController < ApplicationController
+  before_filter :require_user
+  
   def index
     list
     render :action => 'list'
@@ -12,11 +14,11 @@ class TransController < ApplicationController
    newBackLinks
    setBackLink
     
-   @accounts = Account.find(:all)
+   @accounts = Account.find_all_by_user_id(current_user.id)
   end
 
   def list
-    setBackLink
+   setBackLink
     
     form = params["trans_form"];
     session[:session_form] = form
@@ -29,7 +31,7 @@ class TransController < ApplicationController
     setBackLink
     
     form = session[:session_form]
-    conditions = ""
+    conditions = "user_id = #{current_user.id} and"
     
     if form
       param = form["name"]
@@ -75,66 +77,70 @@ class TransController < ApplicationController
     end
 
     if conditions.empty?
-      @transs = Trans.search(nil, "trans_date desc, created_on desc", params['page']);
+      @transs = Trans.search(current_user.id, nil, "trans_date desc, created_on desc", params['page']);
     else
-      @transs = Trans.search(conditions.sub(/and$/, ""), "trans_date desc, created_on desc", params['page']);
+      @transs = Trans.search(current_user.id, conditions.sub(/and$/, ""), "trans_date desc, created_on desc", params['page']);
     end
   end
 
   def show
     setBackLink
-    @trans = Trans.find(params[:id])
+    @trans = Trans.find_by_id_and_user_id(params[:id], current_user.id)
   end
 
   def new
     newBackLinks
     setBackLink
     
-    @accounts = Account.find(:all)
+    @accounts = Account.find_all_by_user_id(current_user.id)
     @trans = Trans.new
   end
 
   def newReturn
     setBackLink
 
-    @accounts = Account.find(:all)
-    @baseTrans = Trans.find(params[:id]);
+    @accounts = Account.find_all_by_user_id(current_user.id)
+    @baseTrans = Trans.find_by_user_id(current_user.id);
 
     @trans = Trans.new
   end
 
   def create
     @trans = Trans.new(params[:trans])
+    @trans.user_id = current_user.id
+    
     Trans.transaction do
-	if @trans.save
-		flash[:notice] = 'Trans was successfully created.'
-	
-		#modyfikuje saldo konta źródłowego
-		sourceAccount = @trans.sourceAccount
-		if sourceAccount
-			sourceAccount.balance = sourceAccount.balance - @trans.amount
-			sourceAccount.save
-		end
-	
-		#modyfikuje saldo konta docelowego
-		destAccount = @trans.destAccount
-		if destAccount
-			destAccount.balance = destAccount.balance + @trans.amount
-			destAccount.save
-		end
-	
-		redirect_to :action => 'list'
-	else
-		@accounts = Account.find(:all)
-		@categories = Category.find(:all)
-		render :action => 'new'
-	end
+  	  if @trans.save
+  		  flash[:notice] = 'Trans was successfully created.'
+  	
+    		#modyfikuje saldo konta źródłowego
+    		sourceAccount = @trans.sourceAccount
+    		if sourceAccount
+    			sourceAccount.balance = sourceAccount.balance - @trans.amount
+    			sourceAccount.save
+    		end
+    	
+    		#modyfikuje saldo konta docelowego
+    		destAccount = @trans.destAccount
+    		if destAccount
+    			destAccount.balance = destAccount.balance + @trans.amount
+    			destAccount.save
+    		end
+    	
+  		  redirect_to :action => 'list'
+	    else
+		    @accounts = Account.find_all_by_user_id(current_user.id)
+        
+		    render :action => 'new'
+	    end
     end
   end
 
   def createReturn
     @trans = Trans.new(params[:trans])
-    returnTrans = Trans.find(params[:baseTransId])
+    @trans.user_id = current_user.id
+    
+    returnTrans = Trans.find_by_id_and_user_id(params[:baseTransId], current_user.id)
     
     @trans.name = "zwrot: #{returnTrans.name}"
     @trans.return_trans_id = returnTrans.id
@@ -154,17 +160,16 @@ class TransController < ApplicationController
         popBackLink
         redirect_to :action => 'show', :id => returnTrans.id
       else
-        @accounts = Account.find(:all)
-        @trans_list = Trans.find(:all, :conditions => "return_trans_id is null", :order => "trans_date desc");
+        @accounts = Account.find_all_by_user_id(current_user.id)
+        @trans_list = Trans.find_all_by_user_id(current_user.id, :conditions => "return_trans_id is null", :order => "trans_date desc");
         render :action => 'newReturn'
       end
     end
   end
 
   def delete
-	
     Trans.transaction do
-    	trans = Trans.find(params[:id])
+    	trans = Trans.find_by_id_and_user_id(params[:id], current_user.id)
     	
     	#modyfikuje saldo konta źródłowego
     	sourceAccount = trans.sourceAccount
@@ -189,7 +194,7 @@ class TransController < ApplicationController
   end
 
   def update_cash_form
-     @accounts = Account.find(:all)
+     @accounts = Account.find_all_by_user_id(current_user.id)
   end
 
   def update_cash
@@ -207,13 +212,14 @@ class TransController < ApplicationController
     else
       
       begin
-        account = Account.find(params[:account_id])
-        category = Category.find(params[:category_id])
+        account = Account.find_by_id_and_user_id(params[:account_id], current_user.id)
+        category = Category.find_by_id_and_user_id(params[:category_id], current_user.id)
 
         diff = newAmount.to_f - account.balance
 
         Trans.transaction do
           new_trans = Trans.new
+          new_trans.user_id = current_user.id
           new_trans.name = transName
           new_trans.category = category
           new_trans.amount = diff.abs
