@@ -1,5 +1,5 @@
 class UserSessionsController < ApplicationController
-  before_filter :require_no_user, :only => [:new, :create, :index]
+  #before_filter :require_no_user, :only => [:new, :create, :index]
   before_filter :require_user, :only => :destroy
   
   def new
@@ -7,17 +7,12 @@ class UserSessionsController < ApplicationController
   end
   
   def create
-    logger.debug "tu 01"
     @user_session = UserSession.new(params[:user_session])
     
-    logger.debug "tu 02"
-    
     @user_session.save do |result|
-      logger.debug "tutututut !!!!!!!!!!!!!!!!!!!!!!!!!!"
-      logger.debug result
       if result
         flash[:notice] = "Login successful!"
-        redirect_back_or_default stats_url
+        redirect_back_or_default root_url
       else
         render :action => :new
       end

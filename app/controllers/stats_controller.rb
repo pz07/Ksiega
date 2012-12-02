@@ -6,7 +6,7 @@ class StatsController < ApplicationController
   
   def index
     all
-    render :action => 'all'
+    render :action => "all"
   end
 
   def all
