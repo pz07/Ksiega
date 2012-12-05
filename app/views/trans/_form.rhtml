@@ -6,6 +6,7 @@
   <td class="content">
     <%= text_field 'trans', 'name' %>
   </td>
+  <td><span id="trans[trans_date]Calendar"></span></td>
 </tr>
 <tr>
   <td class="header">Kategoria</td>
@@ -24,29 +25,33 @@
       	</tr>
 	 </table>
   </td>
+  <td></td>
 </tr>
 <tr>
   <td class="header">Kwota</td>
   <td class="content">
     <%= text_field 'trans', 'amount' %>
   </td>
+  <td></td>
 </tr>
 <tr>
   <td class="header">Date</td>
   <td class="content">
-      	<%= text_field 'trans', 'trans_date', {:size => 10, :maxlength => 10}%>
-		<span id="trans[trans_date]Calendar"></span>
+      	<%= text_field 'trans', 'trans_date', {:size => 10, :maxlength => 10}%><br/>
   </td>
+  <td></td>
 </tr>
 <tr>
   <td class="header">Z konta</td>
   <td class="content">
     <%= collection_select(:trans, :source_account_id, @accounts, :id, :name, options ={:prompt => ""}) %>
   </td>
+  <td></td>
 </tr>
 <tr>
   <td class="header">Na konto</td>
   <td class="content">
     <%= collection_select(:trans, :dest_account_id, @accounts, :id, :name, options ={:prompt => ""}) %>
   </td>
+  <td></td>
 </tr>

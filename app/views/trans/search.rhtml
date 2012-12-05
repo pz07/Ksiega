@@ -63,8 +63,13 @@
 	}
 
 	YAHOO.util.Event.onDOMReady(function () {
-		createCalendar('trans_form[dateFrom]', 'Wybierz datę', 'menubutton');
-		createCalendar('trans_form[dateTo]', 'Wybierz datę', 'menubutton');
+		createCalendarButton('trans_form[dateFrom]', 'Wybierz datę', 'menubutton', function(data){
+			jQuery("#trans_form_dateFrom").attr("value", data);
+		});
+		createCalendarButton('trans_form[dateTo]', 'Wybierz datę', 'menubutton', function(data){
+			jQuery("#trans_form_dateTo").attr("value", data);
+		});
+		
 		catDialog = createCategoryPanel(submitCategories)[0];
 	})
 //-->

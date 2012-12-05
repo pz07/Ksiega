@@ -5,17 +5,6 @@
 
 <style type="text/css">
 
-	#trans\[trans_date\] button
-	{
-    	background:url(/images/calbtn.gif) center center no-repeat;
-	    text-align: left;
-        text-indent: -10em;
-        overflow: hidden;
-        white-space: nowrap;
-        width: 21px;
-        margin-right: 5px;
-    }
-	
 	#catTreeDiv {background: #fff; margin-top:1em; padding:1em; min-height:7em;}
 
 </style>
@@ -62,7 +51,9 @@
 	}
 
 	YAHOO.util.Event.onDOMReady(function () {
-		createCalendar('trans[trans_date]', 'Wybierz datę', 'menubutton');
+		createCalendar('trans[trans_date]', function(data){
+			jQuery("#trans_trans_date").attr("value", data);
+		});
 		catDialog = createCategoryPanel(submitCategories)[0];
 	})
 //-->

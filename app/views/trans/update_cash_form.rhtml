@@ -5,17 +5,6 @@
 
 <style type="text/css">
 
-	#trans_date button
-	{
-    	background:url(/images/calbtn.gif) center center no-repeat;
-	    text-align: left;
-        text-indent: -10em;
-        overflow: hidden;
-        white-space: nowrap;
-        width: 21px;
-        margin-right: 5px;
-    }
-	
 	#catTreeDiv {background: #fff; margin-top:1em; padding:1em; min-height:7em;}
 
 </style>
@@ -133,7 +122,9 @@
 	}
 
 	YAHOO.util.Event.onDOMReady(function () {
-		createCalendar('trans_date', 'Wybierz datę', 'menubutton');
+		createCalendar('trans_date', function(data){
+			jQuery("#trans_date").attr("value", data);
+		});
 		catDialog = createCategoryPanel(submitCategories)[0];
 	})
 //-->
@@ -152,6 +143,9 @@
 				<%= flash[:notice] %>
 			<% end %>
 		</td>
+		<td>
+			<span id="trans_dateCalendar"></span>
+		</td>
 	</tr>
 	<tr>
 	  <td class="header">Wybierz konto</td>
@@ -163,12 +157,14 @@
 			<%end%>
 		</select>
 	  </td>
+	  <td></td>
 	</tr>
 	<tr>
 	  <td class="header">Aktualny stan konta</td>
 	  <td class="content">
 	  	<input name="amount" type="text" onchange="amountChanged();"/>
 	  </td>
+	  <td></td>
 	</tr>
 	<tr>
 		<td colspan="2">
@@ -187,9 +183,10 @@
 				</tr>
 			</table>
 		</td>
+		<td></td>		
 	</tr>		
 	<tr>
-		<td>&nbsp;</td>
+		<td colspan="3">&nbsp;</td>
 	</tr>		
 
 	<tr>
@@ -197,6 +194,7 @@
 	  <td class="content">
 	     <input name="trans_name" type="text"/>
 	  </td>
+	  <td></td>
 	</tr>
 	<tr>
 	  <td class="header">Kategoria transakcji</td>
@@ -210,13 +208,14 @@
 	      	</tr>
 		 </table>
 	  </td>
+	  <td></td>
 	</tr>
 	<tr>
 	  <td class="header">Date</td>
 	  <td class="content">
-	  		<input name="trans_date" type="text" size="10" maxlength="10"/>
-			<span id="trans_dateCalendar"></span>
+	  		<input id="trans_date" name="trans_date" type="text" size="10" maxlength="10" <% if !params[:trans_date] || params[:trans_date].empty? %><%= "value='#{Date.today.strftime("%d-%m-%Y")}'"%><%end%>/>			
 	  </td>
+	  <td></td>
 	</tr>
   <table>
   <br>

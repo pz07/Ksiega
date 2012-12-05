@@ -20,13 +20,12 @@
 /*
  * zdarzenie klikniecia na przycisk. wyswietla kalendarz
  */
-function onButtonClick(e, submitFunction) {
-    var calMenu = this.get('menu');
-	var fieldName = this.get('id');
+function displayCalendar(calendarId, calMenu, submitFunction) {
+    var fieldName = calendarId;
 	
     calMenu.setBody("&#32;");
     calMenu.body.id = "calendarcontainer";
-    calMenu.render(this.get("container"));
+    calMenu.render(getContainerId(calendarId));
     calMenu.align();
     
     var oCalendar = new YAHOO.widget.Calendar("buttoncalendar", calMenu.body.id);	
@@ -76,35 +75,20 @@ function onButtonClick(e, submitFunction) {
 			
 			var data = data + aDate[0];
 
-			/**
-			 * albo wywołuje funckcję, albo ustawiam wartość inputa
-			 */
-			if(submitFunction){
-				submitFunction(data);
-			}
-			else{
-				var input = window.document.getElementById(fieldName + "_INPUT");
-	        	if(input == null){
-	        		input = window.document.forms[0].elements[fieldName]; 
-					if(input == null){
-	        			input = window.document.forms[1].elements[fieldName]; 
-	        		}
-	        	}
-				
-				input.value = data;             
-			}
-        }        
-            
-        calMenu.hide();
+			
+			submitFunction(data);
+		}        
     });
-	
-	this.unsubscribe("click", onButtonClick);
+}
+ 
+function getContainerId(calendarId){
+	return calendarId+'Calendar';
 }
  
  /**
- * tworzenie kalendarza o podanym id (musi byc unikalne)
+ * tworzenie przycisku kalendarza o podanym id (musi byc unikalne)
  */
-function createCalendar(calendarId, label, buttonStyle, submitFunction){
+function createCalendarButton(calendarId, label, buttonStyle, submitFunction){
 	    var oCalendarMenu = new YAHOO.widget.Overlay(calendarId+'menu');
 		
 	    var oButton = new YAHOO.widget.Button({ 
@@ -112,10 +96,33 @@ function createCalendar(calendarId, label, buttonStyle, submitFunction){
                                             id: calendarId, 
                                             label: label, 
                                             menu: oCalendarMenu, 
-                                            container: calendarId+'Calendar',
+                                            container: getContainerId(calendarId),
                                             menuclassname: (buttonStyle ? buttonStyle : 'menubutton') });
 
-		oButton.on("click", onButtonClick, submitFunction);
+		var eventData = new Array();
+		eventData["calendarId"] = calendarId;
+		eventData["oCalendarMenu"] = oCalendarMenu;
+		eventData["submitFunction"] = submitFunction;
+
+		oButton.on("click", onCalendarButtonClick, eventData);
 		return oButton;
+}
+
+function onCalendarButtonClick(e, eventData){
+	var submitFunction = eventData["submitFunction"];
+	var menu = eventData["oCalendarMenu"];
+	displayCalendar(eventData["calendarId"], menu, function(data){
+		submitFunction(data);
+		menu.hide();
+	});
+	this.unsubscribe("click", onCalendarButtonClick);	
+}
+
+/**
+ * tworzenie kalendarza
+ */
+function createCalendar(calendarId, submitFunction){
+	var oCalendarMenu = new YAHOO.widget.Panel(calendarId+'menu');
+	displayCalendar(calendarId, oCalendarMenu, submitFunction);
 }
  

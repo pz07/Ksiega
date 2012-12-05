@@ -162,8 +162,6 @@
 	}
 	
 	function showCalendar(){
-		alert('tu, calButton = '+calButton);
-		alert('tu, calButton.fireEvent = '+onButtonClick);
 		calButton.onButtonClick();;
 	}
 
@@ -203,7 +201,7 @@
 
 	YAHOO.util.Event.onDOMReady(function () {
 		catDialog = createCategoryPanel(submitCategory)[0];
-		calButton = createCalendar('transDate', 'Wybierz datę', 'menubutton', changeDate);
+		calButton = createCalendarButton('transDate', 'Wybierz datę', 'menubutton', changeDate);
 	})
 	
 //-->

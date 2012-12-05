@@ -18,7 +18,7 @@ class TransController < ApplicationController
   end
 
   def list
-   setBackLink
+    setBackLink
     
     form = params["trans_form"];
     session[:session_form] = form
@@ -93,7 +93,9 @@ class TransController < ApplicationController
     setBackLink
     
     @accounts = Account.find_all_by_user_id(current_user.id)
+    
     @trans = Trans.new
+    @trans.trans_date = Date.today.strftime("%d-%m-%Y")
   end
 
   def newReturn
