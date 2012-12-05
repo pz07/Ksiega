@@ -55,6 +55,8 @@
 			jQuery("#trans_trans_date").attr("value", data);
 		});
 		catDialog = createCategoryPanel(submitCategories)[0];
+		
+		jQuery("#trans_name").focus();
 	})
 //-->
 </script>
@@ -68,7 +70,7 @@
     <%= render :partial => "form" %>
   <table>
   <br>
-  <%= submit_tag "Dodaj" %>
+  <%= submit_tag "Dodaj", :tabindex => 70 %>
 <% end %>
 
 

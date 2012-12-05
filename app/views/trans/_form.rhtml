@@ -4,14 +4,14 @@
 <tr>
   <td class="header">Nazwa</td>
   <td class="content">
-    <%= text_field 'trans', 'name' %>
+    <%= text_field 'trans', 'name' ,:tabindex => 10 %>
   </td>
   <td><span id="trans[trans_date]Calendar"></span></td>
 </tr>
 <tr>
   <td class="header">Kategoria</td>
   <td class="content">
-  	 <%= hidden_field 'trans', 'category_id' %>
+  	 <%= hidden_field 'trans', 'category_id'%>
      <table style="width: 100%;">
      	<tr>
      		<td id="categoryName">
@@ -21,7 +21,7 @@
 					<%= @catName%>
 				<% end%>
 			</td>		
-			<td style="text-align: right;"><a href="javascript:showDialog();">Wybierz</a></td>
+			<td style="text-align: right;"><a href="javascript:showDialog();" tabindex="20">Wybierz</a></td>
       	</tr>
 	 </table>
   </td>
@@ -30,28 +30,28 @@
 <tr>
   <td class="header">Kwota</td>
   <td class="content">
-    <%= text_field 'trans', 'amount' %>
+    <%= text_field 'trans', 'amount', :tabindex => 30  %>
   </td>
   <td></td>
 </tr>
 <tr>
   <td class="header">Date</td>
   <td class="content">
-      	<%= text_field 'trans', 'trans_date', {:size => 10, :maxlength => 10}%><br/>
+      	<%= text_field 'trans', 'trans_date', {:size => 10, :maxlength => 10, :tabindex => 40 }%><br/>
   </td>
   <td></td>
 </tr>
 <tr>
   <td class="header">Z konta</td>
   <td class="content">
-    <%= collection_select(:trans, :source_account_id, @accounts, :id, :name, options ={:prompt => ""}) %>
+    <%= collection_select(:trans, :source_account_id, @accounts, :id, :name, options ={:prompt => "" }, :tabindex => 50) %>
   </td>
   <td></td>
 </tr>
 <tr>
   <td class="header">Na konto</td>
   <td class="content">
-    <%= collection_select(:trans, :dest_account_id, @accounts, :id, :name, options ={:prompt => ""}) %>
+    <%= collection_select(:trans, :dest_account_id, @accounts, :id, :name, options ={:prompt => ""}, :tabindex => 60 ) %>
   </td>
   <td></td>
 </tr>
