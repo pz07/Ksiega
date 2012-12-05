@@ -14,7 +14,7 @@ class TransController < ApplicationController
    newBackLinks
    setBackLink
     
-   @accounts = Account.find_all_by_user_id(current_user.id)
+   @accounts = get_user_accounts
   end
 
   def list
@@ -92,7 +92,7 @@ class TransController < ApplicationController
     newBackLinks
     setBackLink
     
-    @accounts = Account.find_all_by_user_id(current_user.id)
+    @accounts = get_user_accounts
     
     @trans = Trans.new
     @trans.trans_date = Date.today.strftime("%d-%m-%Y")
@@ -101,7 +101,7 @@ class TransController < ApplicationController
   def newReturn
     setBackLink
 
-    @accounts = Account.find_all_by_user_id(current_user.id)
+    @accounts = get_user_accounts
     @baseTrans = Trans.find_by_user_id(current_user.id);
 
     @trans = Trans.new
@@ -131,7 +131,7 @@ class TransController < ApplicationController
     	
   		  redirect_to :action => 'list'
 	    else
-		    @accounts = Account.find_all_by_user_id(current_user.id)
+		    @accounts = get_user_accounts
         
 		    render :action => 'new'
 	    end
@@ -162,7 +162,7 @@ class TransController < ApplicationController
         popBackLink
         redirect_to :action => 'show', :id => returnTrans.id
       else
-        @accounts = Account.find_all_by_user_id(current_user.id)
+        @accounts = get_user_accounts
         @trans_list = Trans.find_all_by_user_id(current_user.id, :conditions => "return_trans_id is null", :order => "trans_date desc");
         render :action => 'newReturn'
       end
@@ -196,7 +196,7 @@ class TransController < ApplicationController
   end
 
   def update_cash_form
-     @accounts = Account.find_all_by_user_id(current_user.id)
+     @accounts = get_user_accounts
   end
 
   def update_cash
@@ -246,5 +246,11 @@ class TransController < ApplicationController
     end
 
     redirect_to :action => 'update_cash_form'  
+  end
+  
+  private
+  
+  def get_user_accounts()
+    return Account.find_all_by_user_id(current_user.id, :order => "name asc")
   end
 end
