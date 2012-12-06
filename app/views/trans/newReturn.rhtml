@@ -35,7 +35,9 @@
 	<script type="text/javascript">
 	<!--
 		YAHOO.util.Event.onDOMReady(function () {
-			createCalendar('trans[trans_date]', 'Wybierz datę', 'menubutton');
+			createCalendarButton('trans[trans_date]', 'Wybierz datę', 'menubutton', function(data){
+				jQuery("#trans_trans_date").attr("value", data);
+			});
 		})
 	//-->
 	</script>

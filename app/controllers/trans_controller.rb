@@ -102,9 +102,10 @@ class TransController < ApplicationController
     setBackLink
 
     @accounts = get_user_accounts
-    @baseTrans = Trans.find_by_user_id(current_user.id);
+    @baseTrans = Trans.find_by_id_and_user_id(params[:id], current_user.id);
 
     @trans = Trans.new
+    @trans.trans_date = Date.today.strftime("%d-%m-%Y")
   end
 
   def create
