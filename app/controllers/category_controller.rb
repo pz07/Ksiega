@@ -17,6 +17,8 @@ class CategoryController < ApplicationController
       else
         render :text => '-2'
       end
+      
+      CategoryCache.get_from_session(session).refresh
     rescue ActiveRecord::RecordNotFound
       render :text => '-1'
     rescue ActiveRecord::StatementInvalid
@@ -42,6 +44,8 @@ class CategoryController < ApplicationController
       else
         render :text => '-2'
       end
+      
+      CategoryCache.get_from_session(session).refresh
     rescue ActiveRecord::RecordNotFound
       render :text => '-1'
     rescue ActiveRecord::StatementInvalid
@@ -55,6 +59,8 @@ class CategoryController < ApplicationController
       cat.destroy
       
       render :text => '0'
+      
+      CategoryCache.get_from_session(session).refresh
     rescue ActiveRecord::RecordNotFound
       render :text => '-1'
     rescue ActiveRecord::StatementInvalid
@@ -81,6 +87,8 @@ class CategoryController < ApplicationController
           render :text => '-3'
          end
       end
+      
+      CategoryCache.get_from_session(session).refresh
     rescue ActiveRecord::RecordNotFound
       render :text => '-1'
     end
