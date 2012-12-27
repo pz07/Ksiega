@@ -49,6 +49,31 @@
 	function hideDialog(){
 		catDialog.hide();
 	}
+	
+	function on_trans_type_chanded(){
+		var from = jQuery("#trans_source_account_id").val();
+		var to = jQuery("#trans_dest_account_id").val();
+		
+		var type = "&nbsp";
+		var clz = "";
+		if(from != '' && to != '')
+			type = "transfer";
+		if(from != '' && to == ''){
+			type = "outcome";
+			clz = "trans_type_outcome_row"
+		}
+		if(from == '' && to != ''){
+			clz = "trans_type_income_row"
+			type = "income";
+		}
+			
+		jQuery("#trans_type").html(type);
+		
+		jQuery("#trans_type").removeClass("trans_type_outcome_row");
+		jQuery("#trans_type").removeClass("trans_type_income_row");	
+		
+		jQuery("#trans_type").addClass(clz);
+	}
 
 	YAHOO.util.Event.onDOMReady(function () {
 		createCalendar('trans[trans_date]', function(data){
@@ -56,7 +81,8 @@
 		});
 		catDialog = createCategoryPanel(submitCategories)[0];
 		
-		jQuery("#trans_name").focus();
+		jQuery("#trans_source_account_id").focus();
+		on_trans_type_chanded();		
 	})
 //-->
 </script>

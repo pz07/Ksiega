@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121202122314) do
+ActiveRecord::Schema.define(:version => 20121227223113) do
 
   create_table "account", :force => true do |t|
     t.string   "name",       :limit => 256,                 :null => false
@@ -68,6 +68,7 @@ ActiveRecord::Schema.define(:version => 20121202122314) do
     t.datetime "updated_on",                                       :null => false
     t.integer  "return_trans_id"
     t.integer  "user_id",                          :default => -1
+    t.string   "trans_type",                                       :null => false
   end
 
   add_index "trans", ["user_id"], :name => "index_trans_on_user_id"

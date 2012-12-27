@@ -90,4 +90,12 @@ a {
 .checkedLabel{
 	background-color: yellow;
 }
+
+.trans_type_outcome_row {
+	color: red;	
+}
+
+.trans_type_income_row {
+	color: green;	
+}
 	

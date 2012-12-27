@@ -7,12 +7,13 @@
 <table class="list_table">
   <tr>
     <th>id</th>
-    <th>nazwa</th>
-    <th>kategoria</th>
-    <th>data</th>
-    <th>kwota</th>
-    <th>z konta</th>
-    <th>na konto</th>
+    <th>name</th>
+    <th>type</th>
+    <th>categories</th>
+    <th>date</th>
+    <th>amount</th>
+    <th>from</th>
+    <th>to</th>
   </tr>
 <%
   sum = 0; 
@@ -22,6 +23,7 @@
   <tr>
     <td><%= link_to t.id.to_s, :action => 'show', :id => t %></td>
     <td><%= t.name %></td>
+    <td class="trans_type_<%= t.trans_type %>_row"><%= t.trans_type %></td>
     <td><%= t.category.getPath() if t.category != nil %></td>
     <td><%= date_format(t.trans_date) %></td>
     <td style="text-align: right;"><%= sprintf("%.2f", t.realAmount) %></td>
@@ -30,7 +32,7 @@
   </tr>
 <% end %>
   <tr>
-  	<td style="background-color: white; text-align: right;" colspan="4">Razem:</td>
+  	<td style="background-color: white; text-align: right;" colspan="5">Razem:</td>
 	<td style="border: 1px solid black;"><%= sum %></td>
 	<td style="background-color: white;" colspan="2"></td>
   </tr>

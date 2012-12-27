@@ -111,7 +111,7 @@ class TransController < ApplicationController
   def create
     @trans = Trans.new(params[:trans])
     @trans.user_id = current_user.id
-    
+
     Trans.transaction do
   	  if @trans.save
   		  flash[:notice] = 'Trans was successfully created.'
@@ -164,7 +164,8 @@ class TransController < ApplicationController
         redirect_to :action => 'show', :id => returnTrans.id
       else
         @accounts = get_user_accounts
-        @trans_list = Trans.find_all_by_user_id(current_user.id, :conditions => "return_trans_id is null", :order => "trans_date desc");
+        @baseTrans = Trans.find_by_id_and_user_id(params[:baseTransId], current_user.id);
+
         render :action => 'newReturn'
       end
     end
@@ -216,7 +217,11 @@ class TransController < ApplicationController
       
       begin
         account = Account.find_by_id_and_user_id(params[:account_id], current_user.id)
-        category = Category.find_by_id_and_user_id(params[:category_id], current_user.id)
+        if params[:category_id].to_i.to_s == params[:category_id] 
+          category = Category.find_by_id_and_user_id(params[:category_id], current_user.id)
+        else
+          category = nil
+        end
 
         diff = newAmount.to_f - account.balance
 

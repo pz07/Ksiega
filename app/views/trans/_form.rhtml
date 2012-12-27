@@ -2,9 +2,26 @@
 <%= error_messages_for 'trans' %>
 
 <tr>
+  <td class="header">Transaction</td>
+  <td class="content">
+  	from&nbsp;
+    <%= collection_select(:trans, :source_account_id, @accounts, :id, :name, options ={:prompt => "" }, :tabindex => 10, :onchange => "on_trans_type_chanded()") %>
+    &nbsp;to&nbsp;
+    <%= collection_select(:trans, :dest_account_id, @accounts, :id, :name, options ={:prompt => ""}, :tabindex => 20, :onchange => "on_trans_type_chanded()" ) %>
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td class="header">Type</td>
+  <td id="trans_type" class="content">
+  	&nbsp;
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td class="header">Nazwa</td>
   <td class="content">
-    <%= text_field 'trans', 'name' ,:tabindex => 10 %>
+    <%= text_field 'trans', 'name' ,:tabindex => 30 %>
   </td>
   <td><span id="trans[trans_date]Calendar"></span></td>
 </tr>
@@ -21,7 +38,7 @@
 					<%= @catName%>
 				<% end%>
 			</td>		
-			<td style="text-align: right;"><a href="javascript:showDialog();" tabindex="20">Wybierz</a></td>
+			<td style="text-align: right;"><a href="javascript:showDialog();" tabindex="40">Wybierz</a></td>
       	</tr>
 	 </table>
   </td>
@@ -30,28 +47,14 @@
 <tr>
   <td class="header">Kwota</td>
   <td class="content">
-    <%= text_field 'trans', 'amount', :tabindex => 30  %>
+    <%= text_field 'trans', 'amount', :tabindex => 50  %>
   </td>
   <td></td>
 </tr>
 <tr>
   <td class="header">Date</td>
   <td class="content">
-      	<%= text_field 'trans', 'trans_date', {:size => 10, :maxlength => 10, :tabindex => 40 }%><br/>
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td class="header">Z konta</td>
-  <td class="content">
-    <%= collection_select(:trans, :source_account_id, @accounts, :id, :name, options ={:prompt => "" }, :tabindex => 50) %>
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td class="header">Na konto</td>
-  <td class="content">
-    <%= collection_select(:trans, :dest_account_id, @accounts, :id, :name, options ={:prompt => ""}, :tabindex => 60 ) %>
+      	<%= text_field 'trans', 'trans_date', {:size => 10, :maxlength => 10, :tabindex => 60 }%><br/>
   </td>
   <td></td>
 </tr>

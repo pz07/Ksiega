@@ -126,6 +126,8 @@
 			jQuery("#trans_date").attr("value", data);
 		});
 		catDialog = createCategoryPanel(submitCategories)[0];
+		
+		jQuery("#trans_account_id").focus();
 	})
 //-->
 </script>
@@ -150,7 +152,7 @@
 	<tr>
 	  <td class="header">Wybierz konto</td>
 	  <td class="content">
-	  	<select name="account_id" onchange="javascript:accountChanged();">
+	  	<select id="trans_account_id" name="account_id" onchange="javascript:accountChanged();">
 			<option value=""></option>
 			<% for acc in @accounts %>
 				<option value="<%= acc.id %>"><%= acc.name %></option>
@@ -162,7 +164,7 @@
 	<tr>
 	  <td class="header">Aktualny stan konta</td>
 	  <td class="content">
-	  	<input name="amount" type="text" onchange="amountChanged();"/>
+	  	<input id="trans_amount" name="amount" type="text" onchange="amountChanged();"/>
 	  </td>
 	  <td></td>
 	</tr>
