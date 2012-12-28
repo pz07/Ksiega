@@ -24,8 +24,13 @@ function createCategoryPanel(submitCatFunction){
     var selectedNode = null;
 
     function loadNodeData(node, fnLoadComplete)  {
-	   var sUrl = "/ajax/getSubCategories?parentCatId=" + node.data.id; 
-	     
+       var node_id = null;
+       if(node && node.data && node.data.id){
+         node_id = node.data.id;
+       }
+       
+       var sUrl = "/ajax/getSubCategories"+(node_id ? "?parentCatId=" + node_id : "");
+         
 	    var callback = { 
 	        success: function(oResponse) { 
 				result = oResponse.responseText;
@@ -60,12 +65,10 @@ function createCategoryPanel(submitCatFunction){
 	 tree.setDynamicLoad(loadNodeData, 0);
 	    
 	 var root = tree.getRoot();
-	    
- 	 var tempNode = new YAHOO.widget.TextNode({id: 0, label: "Kategorie"}, root, false);
-	 tempNode.isLeaf = false;
-	 
-	 tempNode.expand();
-	 
+	 loadNodeData(root, function(){
+	 	tree.draw();
+	 }); 
+ 	 
 	 tree.subscribe("labelClick", function(node) { 
     	  if(selectedNode != null && selectedNode.data.id == node.data.id){
 		  	 selectedNode = null; 

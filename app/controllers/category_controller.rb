@@ -7,6 +7,7 @@ class CategoryController < ApplicationController
 	end
 
 	def list
+	  @categories = CategoryCache.get_from_session(session).get_categories_by_parent_id(current_user.id, nil);
   end
 
 	def changeName
@@ -56,6 +57,14 @@ class CategoryController < ApplicationController
   def delCat
     begin
       cat = Category.find_by_id_and_user_id(params[:catId], current_user.id)
+      
+      if cat.parent_id == nil
+        render :text => -1
+        return
+      end
+      
+      Trans.update_all("category_id = null", "category_id = #{cat.id}")
+      
       cat.destroy
       
       render :text => '0'

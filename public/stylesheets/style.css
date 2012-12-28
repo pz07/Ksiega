@@ -98,4 +98,8 @@ a {
 .trans_type_income_row {
 	color: green;	
 }
+
+#catDialogDiv_c{
+	z-index: 10 !important;
+}
 	

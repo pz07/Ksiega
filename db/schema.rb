@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121227223113) do
+ActiveRecord::Schema.define(:version => 20121228000107) do
 
   create_table "account", :force => true do |t|
     t.string   "name",       :limit => 256,                 :null => false
@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(:version => 20121227223113) do
     t.datetime "created_on",                                :null => false
     t.datetime "updated_on",                                :null => false
     t.integer  "user_id",                   :default => -1, :null => false
+    t.string   "trans_type"
   end
 
   add_index "category", ["name", "parent_id"], :name => "category_name_key", :unique => true

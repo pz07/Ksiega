@@ -31,4 +31,16 @@ class Category < ActiveRecord::Base
     end
   end
 
+  def trans_type
+    ret = read_attribute(:trans_type)
+    if ret
+      return ret.to_sym
+    else
+      return nil
+    end
+  end
+
+  def trans_type=(new_trans_type)
+    write_attribute :trans_type, new_trans_type.to_s
+  end
 end

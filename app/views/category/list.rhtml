@@ -33,16 +33,16 @@
 	    
     	function loadNodeData(node, fnLoadComplete)  {
 		   var sUrl = "/ajax/getSubCategories?parentCatId=" + node.data.id; 
-	     
+		   
 		   var callback = { 
 	    	    success: function(oResponse) { 
-					result = oResponse.responseText;
-				
+	    	    	result = oResponse.responseText;
+					
 					categories = result.split("|");
 					for(var i = 0; i < categories.length; i++){
 						catDef = categories[i].split(":");
 						if(catDef.length == 3){
-							var tempNode = new YAHOO.widget.TextNode({id: catDef[0], label: catDef[1]}, node, false); 	
+							var tempNode = new YAHOO.widget.TextNode({id: catDef[0], label: catDef[1], parent_id: node.data.id}, node, false); 	
 							if(isNaN(catDef[2]) || Number(catDef[2]) == 0 ){
 								tempNode.isLeaf = true;
 							}
@@ -60,8 +60,8 @@
 	        	}, 
 		        timeout: 1000 
 		    }; 
-	     
-	    	YAHOO.util.Connect.asyncRequest('GET', sUrl, callback); 
+	     	
+	     	YAHOO.util.Connect.asyncRequest('GET', sUrl, callback); 
 	     }
 	 
 	 	tree = new YAHOO.widget.TreeView("catsDiv");
@@ -69,8 +69,10 @@
 	    
 		var root = tree.getRoot();
 	    
-		var tempNode = new YAHOO.widget.TextNode({id: 0, label: 'Kategorie'}, root, false); 	
-	 
+	    <% @categories.each do |category| %>
+	    	var tempNode<%= category.id %> = new YAHOO.widget.TextNode({id: <%= category.id %>, label: '<%= category.name %>', parent_id: null}, root, false);
+	    <% end %>
+	    
 	 	tree.subscribe("labelClick", function(node) { 
 		  hideButtons();
 		
@@ -84,8 +86,8 @@
 			}
 			
 			document.getElementById('newBtn').style.display = '';
-			if(node.data.id != 0){
-				document.getElementById('cNameBtn').style.display = '';
+			document.getElementById('cNameBtn').style.display = '';
+			if(node.data.parent_id != null){
 				document.getElementById('cParentBtn').style.display = '';
 				document.getElementById('deleteBtn').style.display = '';
 			}
@@ -242,8 +244,6 @@
 	
 	function changeParent(){
 		catParents[1].removeChildren(catParents[1].getRoot().children[0]); 
-		catParents[1].getRoot().children[0].expand();
-		
 		catParents[0].show();
 	}
 	
@@ -306,18 +306,17 @@
 
 <div class="title">Kategorie przychodów/rozchodów</div>
 
-<div>
+<div style="height: 20px;">
 	&nbsp;
 	<input id="cNameBtn" type="button" value="Zmień nazwę" onclick="javascript:changeName();" style="display: none;"/>
-	<input id="cParentBtn" type="button" value="Zmień rodzica" onclick="javascript:changeParent();" style="display: none;"/>
 	<input id="newBtn" type="button" value="Nowa kategoria" onclick="javascript:newCat();" style="display: none;"/>
+	<input id="cParentBtn" type="button" value="Zmień rodzica" onclick="javascript:changeParent();" style="display: none;"/>
 	<input id="deleteBtn" type="button" value="Usuń kategorię" onclick="javascript:delCat();" style="display: none;"/>
 </div>
-<br>
-<div id="status">
+<br/>
+<div id="status" style="height: 20px;">
 	&nbsp;
 </div>
-<br>
 <div>
 	<div class="bd">
 		<div id="catsDiv"></div>

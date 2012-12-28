@@ -2,12 +2,7 @@ class AjaxController < ApplicationController
   before_filter :require_user
 
   def getSubCategories
-    categories = nil;
-    if params["parentCatId"] == '0'
-      categories = CategoryCache.get_from_session(session).get_categories_by_parent_id(current_user.id, nil)  
-    else
-      categories = CategoryCache.get_from_session(session).get_categories_by_parent_id(current_user.id, params["parentCatId"])
-    end
+    categories = CategoryCache.get_from_session(session).get_categories_by_parent_id(current_user.id, params["parentCatId"]);
     
     retString = ""
     
