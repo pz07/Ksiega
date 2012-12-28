@@ -27,6 +27,8 @@
 <%= javascript_include_tag 'ksiega_calendar'%>
 <%= javascript_include_tag 'ksiega_categories'%>
 
+<%= javascript_include_tag 'jquery-ui'%>
+
 <script type="text/javascript">
 <!--
 	var catDialog = null;
@@ -128,7 +130,38 @@
 		catDialog = createCategoryPanel(submitCategories)[0];
 		
 		jQuery("#trans_account_id").focus();
-	})
+	});
+	
+	jQuery(function() {
+        var availableTags = [
+        	<% @categories.each do |category| %>
+        		{ label: "<%= category.full_name %>", id: <%= category.id %> },
+			<% end %>
+        ];
+        var catAC = jQuery( "#categoryAutocomplete" ).autocomplete({
+            source: availableTags,
+            minLength: 0,
+            change: function( event, ui ) {
+            	selected_id = null
+            	if(ui.item){
+            		selected_id = ui.item.id
+            		alert('selected_id ='+selected_id);
+            		document.getElementById("category_id").value = selected_id;
+            	}
+            }
+        });
+        
+        category_id = jQuery("#category_id").val(); 
+        if(category_id && category_id != ''){
+        	for(idx in availableTags){
+        		if(availableTags[idx].id == Number(category_id)){
+        			jQuery( "#categoryAutocomplete" ).val(availableTags[idx].label);
+        			break;		
+        		}
+        	}
+        }
+    });
+    
 //-->
 </script>
 
@@ -194,7 +227,7 @@
 	<tr>
 	  <td class="header">Nazwa transakcji</td>
 	  <td class="content">
-	     <input name="trans_name" type="text"/>
+	     <input name="trans_name" type="text" size="50"/>
 	  </td>
 	  <td></td>
 	</tr>
@@ -202,13 +235,9 @@
 	  <td class="header">Kategoria transakcji</td>
 	  <td class="content">
 	  	 <input name="category_id" id="category_id" type="hidden"/>
-	     <table style="width: 100%;">
-	     	<tr>
-	     		<td id="categoryName">
-				</td>		
-				<td style="text-align: right;"><a href="javascript:showDialog();">Wybierz</a></td>
-	      	</tr>
-		 </table>
+       	 <input id="categoryAutocomplete" type="text" <% if @catName != nil%> value="<%= @catName%>" <% end %> size="50"/>
+	  	 <br/>
+    	 <a href="javascript:showDialog();" style="font-size: 9px;" tabindex="140">Category tree</a>
 	  </td>
 	  <td></td>
 	</tr>

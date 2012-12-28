@@ -93,6 +93,7 @@ class TransController < ApplicationController
     setBackLink
     
     @accounts = get_user_accounts
+    @categories = CategoryCache.get_from_session(session).get_categories(current_user.id);
     
     @trans = Trans.new
     @trans.trans_date = Date.today.strftime("%d-%m-%Y")
@@ -133,7 +134,8 @@ class TransController < ApplicationController
   		  redirect_to :action => 'list'
 	    else
 		    @accounts = get_user_accounts
-        
+        @categories = CategoryCache.get_from_session(session).get_categories(current_user.id);
+
 		    render :action => 'new'
 	    end
     end
@@ -199,6 +201,7 @@ class TransController < ApplicationController
 
   def update_cash_form
      @accounts = get_user_accounts
+     @categories = CategoryCache.get_from_session(session).get_categories(current_user.id);
   end
 
   def update_cash
@@ -250,6 +253,8 @@ class TransController < ApplicationController
         flash[:notice] = 'Nie znaleziono konta lub kategorii transakcji!'
       end
     end
+
+    @categories = CategoryCache.get_from_session(session).get_categories(current_user.id);
 
     redirect_to :action => 'update_cash_form'  
   end

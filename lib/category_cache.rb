@@ -40,7 +40,23 @@ class CategoryCache
   private
   
     def init_categories(user_id)
-      @categories = Category.find_all_by_user_id(user_id, :order => "name asc")
+      @categories = Category.find_all_by_user_id(user_id, :order => "parent_id asc, name asc")
+      
+      @categories.each do |cat|
+        cat.full_name = find_full_name(@categories, cat)
+      end
+      
+      @categories = @categories.sort_by { |a| a.full_name}
+    end
+    
+    def find_full_name(categories, cat)
+      if cat.parent_id
+        parent = categories.find { |c| c.id == cat.parent_id}
+        parent_full_name = find_full_name(categories, parent) 
+        return "#{parent_full_name} => #{cat.name}"
+      else
+        return cat.name 
+      end
     end
   
 end

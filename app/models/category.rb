@@ -4,6 +4,8 @@ class Category < ActiveRecord::Base
   has_many :children, :class_name => 'Category', :foreign_key => 'parent_id'
 	
 	validates_presence_of :name, :message => "Podaj nazwę kategorii!"
+	
+	attr_accessor :full_name
   
   def self.all(page)
     paginate :per_page => 10, :page => page

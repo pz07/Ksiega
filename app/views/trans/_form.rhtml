@@ -21,7 +21,7 @@
 <tr>
   <td class="header">Nazwa</td>
   <td class="content">
-    <%= text_field 'trans', 'name' ,:tabindex => 30 %>
+    <%= text_field 'trans', 'name' ,:tabindex => 30, :size => 50 %>
   </td>
   <td><span id="trans[trans_date]Calendar"></span></td>
 </tr>
@@ -29,18 +29,9 @@
   <td class="header">Kategoria</td>
   <td class="content">
   	 <%= hidden_field 'trans', 'category_id'%>
-     <table style="width: 100%;">
-     	<tr>
-     		<td id="categoryName">
-     			<% if @catName == nil%>
-	     			<i>-Wybierz kategorię-</>
-				<% else%>
-					<%= @catName%>
-				<% end%>
-			</td>		
-			<td style="text-align: right;"><a href="javascript:showDialog();" tabindex="40">Wybierz</a></td>
-      	</tr>
-	 </table>
+  	 <input id="categoryAutocomplete" type="text" <% if @catName != nil%> value="<%= @catName%>" <% end %> tabindex="45" size="50"/>
+  	 <br/>
+     <a href="javascript:showDialog();" style="font-size: 9px;" tabindex="140">Category tree</a>
   </td>
   <td></td>
 </tr>
