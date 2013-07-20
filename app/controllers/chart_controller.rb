@@ -24,6 +24,8 @@ class ChartController < ApplicationController
       maxValue = [maxValue, value[0], value[1]].max
     end
     
+    maxValue = maxValue + (500 - maxValue % 500)
+    
     g = Graph.new
     g.title( 'Przychody i wydatki', '{color: #7E97A6; font-size: 20; text-align: center}' )
     g.set_bg_color('#FFFFFF')
@@ -34,7 +36,7 @@ class ChartController < ApplicationController
     g.set_data(outData)
     g.line_hollow( 2, 4, '#164166', 'przychodzy', 10 )
     
-    g.set_y_max(maxValue + (500 - maxValue % 500))
+    g.set_y_max(maxValue)
     g.set_x_axis_color('#818D9D', '#F0F0F0' )
     g.set_y_axis_color( '#818D9D', '#ADB5C7' )
     g.set_y_legend( 'Kwota', 12, '#164166' )
@@ -42,7 +44,7 @@ class ChartController < ApplicationController
     g.set_x_labels(labels)
     g.set_x_label_style(8, '#164166', 0, 0, '#818D9D' )
     
-    g.set_y_label_steps(10)
+    g.set_y_label_steps(maxValue / 500)
 
     puts g.render
     
@@ -69,6 +71,9 @@ class ChartController < ApplicationController
       minValue = [minValue, value[0] - value[1]].min
     end
     
+    minValue = minValue - minValue % 500
+    maxValue = maxValue + (500 - maxValue % 500)
+    
     g = Graph.new;
     g.title( 'Salda miesięczne', '{color: #7E97A6; font-size: 20; text-align: center}' );
     g.set_bg_color('#FFFFFF')
@@ -82,9 +87,9 @@ class ChartController < ApplicationController
     g.set_x_axis_color('#818D9D', '#F0F0F0' )
     g.set_y_axis_color( '#818D9D', '#ADB5C7' )
     
-    g.set_y_min( minValue - minValue % 500 );
-    g.set_y_max( maxValue + (500 - maxValue % 500) );
-    g.set_y_label_steps( 12 );
+    g.set_y_min( minValue );
+    g.set_y_max( maxValue );
+    g.set_y_label_steps( (maxValue - minValue) / 500 );
     g.set_y_legend( 'Różnica dochody/rozchody', 12, '#164166' );
     
     render :text => g.render;
