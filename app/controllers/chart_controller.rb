@@ -13,12 +13,15 @@ class ChartController < ApplicationController
     labels = Array.new
     
     keys = inoutData.keys.sort{|a, b| a <=> b} 
+    maxValue = 0;
     for key in keys
       labels.push(FormatUtils.date_month_format(key))
       
       value = inoutData[key]
       inData.push(value[0])
       outData.push(value[1])
+      
+      maxValue = [maxValue, value[0], value[1]].max
     end
     
     g = Graph.new
@@ -31,7 +34,7 @@ class ChartController < ApplicationController
     g.set_data(outData)
     g.line_hollow( 2, 4, '#164166', 'przychodzy', 10 )
     
-    g.set_y_max(5000)
+    g.set_y_max(maxValue + (500 - maxValue % 500))
     g.set_x_axis_color('#818D9D', '#F0F0F0' )
     g.set_y_axis_color( '#818D9D', '#ADB5C7' )
     g.set_y_legend( 'Kwota', 12, '#164166' )
@@ -53,11 +56,17 @@ class ChartController < ApplicationController
     data = Array.new
     
     keys = inoutData.keys.sort{|a, b| a <=> b} 
+    
+    maxValue = 0
+    minValue = 0
     for key in keys
       labels.push(FormatUtils.date_month_format(key))
       
       value = inoutData[key]
       data.push(value[0] - value[1])
+    
+      maxValue = [maxValue, value[0] - value[1]].max
+      minValue = [minValue, value[0] - value[1]].min
     end
     
     g = Graph.new;
@@ -73,8 +82,8 @@ class ChartController < ApplicationController
     g.set_x_axis_color('#818D9D', '#F0F0F0' )
     g.set_y_axis_color( '#818D9D', '#ADB5C7' )
     
-    g.set_y_min( -3000 );
-    g.set_y_max( 3000 );
+    g.set_y_min( minValue - minValue % 500 );
+    g.set_y_max( maxValue + (500 - maxValue % 500) );
     g.set_y_label_steps( 12 );
     g.set_y_legend( 'Różnica dochody/rozchody', 12, '#164166' );
     
