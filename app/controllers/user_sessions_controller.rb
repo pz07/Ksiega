@@ -1,3 +1,5 @@
+require 'rack/openid'
+
 class UserSessionsController < ApplicationController
   #before_filter :require_no_user, :only => [:new, :create, :index]
   before_filter :require_user, :only => :destroy

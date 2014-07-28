@@ -3,3 +3,5 @@ temp
 .project
 .loadpath
 config/database.yml
+db/db_dev_db.sqlite3
+tmp

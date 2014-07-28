@@ -44,14 +44,14 @@ Rails::Initializer.run do |config|
   # config.active_record.default_timezone = :utc
 
   config.active_record.pluralize_table_names = false
+
+  config.gem "rack-openid", :lib => 'rack/openid', :version => '= 1.3.1'
   
   config.gem "authlogic"
   
   config.gem "facebooker"
   
-  config.gem 'gravtastic', :version => '= 2.1.0'
-  
-  config.gem "rack-openid", :lib => 'rack/openid', :version => '>=0.2.1'
+  config.gem 'gravtastic', :version => '= 2.1.0'  
   # See Rails::Configuration for more options
 end
 
