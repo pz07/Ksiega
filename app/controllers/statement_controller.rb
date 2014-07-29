@@ -41,7 +41,7 @@ class StatementController < ApplicationController
 			for i in 5..statement.size
 				if statement[i] != nil and statement[i].size == 10
 					trans_date = DateTime.strptime(statement[i][1], '%Y-%m-%d')
-					trans_amount = statement[i][2].to_f
+					trans_amount = statement[i][2].gsub(',', '.').to_f
 					
 					account_from = nil
 					account_to = nil
