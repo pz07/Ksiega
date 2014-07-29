@@ -108,10 +108,10 @@ class AjaxController < ApplicationController
 
   def addTrans
     begin
-      accountFrom = Account.find_by_id_and_user_id(params[:accountFromId], current_user.id)
-      accountTo = Account.find_by_id_and_user_id(params[:accountToId], current_user.id)
+      accountFrom = Account.find_by_id_and_user_id(params[:accountFromId], current_user.id) if params[:accountFromId] and !params[:accountFromId].empty?
+      accountTo = Account.find_by_id_and_user_id(params[:accountToId], current_user.id) if params[:accountToId] and !params[:accountToId].empty?
       category = nil
-      if params[:categoryId]
+      if params[:categoryId] and not params[:categoryId].empty?
         category = Category.find_by_user_id_and_id(current_user.id, params[:categoryId])
       end
 
