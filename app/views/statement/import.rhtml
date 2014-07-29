@@ -48,7 +48,7 @@
 				jQuery("tr#"+transId).addClass("processed")
 			}
 			else{
-				jQuery("tr#"+transId+"_info td").html("Nieznany błąd! #{resp}");		
+				jQuery("tr#"+transId+"_info td").html("Nieznany błąd! " + resp);		
 				jQuery("tr#"+transId+"_info td").addClass("msgFailure")
 				//if(Number(resp) == -1){
 				//	document.getElementById('catStatus').innerHTML = "Błąd! Nie znaleziono transakcji lub kategorii!";	
