@@ -3,7 +3,7 @@ source "http://gems.github.com"
 #ruby "1.8.7"
 
 gem 'pg'
-gem 'sqlite3'
+#gem 'sqlite3'
 gem "rails", "2.3.15"
 gem 'thin'
 gem 'mislav-will_paginate'
