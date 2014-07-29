@@ -24,10 +24,10 @@
         });
 
         jQuery("select[name='accountFromIdSelect']").on( "change", function( event ) {
-        	jQuery( this ).parent().find("input[name='accountFromId']").val(jQuery("select[name='accountFromIdSelect']").val());
+        	jQuery( this ).parent().find("input[name='accountFromId']").val(jQuery( this ).parent().find("select[name='accountToIdSelect']").val());
         });
         jQuery("select[name='accountToIdSelect']").on( "change", function( event ) {
-        	jQuery( this ).parent().find("input[name='accountToId']").val(jQuery("select[name='accountToIdSelect']").val());
+			jQuery( this ).parent().find("input[name='accountToId']").val(jQuery( this ).parent().find("select[name='accountToIdSelect']").val());
         });
     });
 
