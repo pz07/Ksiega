@@ -62,7 +62,7 @@ class StatementController < ApplicationController
 				end
 			end
 			
-			return items
+			return items.reverse
 		end
 
 		def get_user_accounts()
