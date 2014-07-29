@@ -20,6 +20,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :categories
   
   map.resource :statses
+
+  map.resource :statements
   
   map.root :controller => "stats", :action => "all"
 

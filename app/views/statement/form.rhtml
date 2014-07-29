@@ -1,0 +1,27 @@
+<% form_tag({:action => 'import'}, :multipart => true) do %>
+  <table class="form_table">
+    <tr>
+      <td class="header">Statement file:</td>
+      <td class="content">
+         <%= file_field(:statement, :file) %>
+      </td>
+    </tr>
+    <tr>
+      <td class="header">For account:</td>
+      <td id="account" class="content">
+      	<%= collection_select(:statement, :account_id, @accounts, :id, :name, options ={:prompt => "" }, :tabindex => 20) %>
+      </td>
+    </tr>
+    <tr>
+      <td class="header">Statement type</td>
+      <td class="content">
+        <%= select(:statement, :type, @statementTypes, options = {:prompt => "" }, :tabindex => 30) %>       
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <%= submit_tag "Wczytaj", :tabindex => 70 %>
+      </td>
+    </tr> 
+  </table>
+<% end %>

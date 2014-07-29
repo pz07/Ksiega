@@ -1,0 +1,214 @@
+<%= javascript_include_tag 'jquery-ui'%>
+
+<%= javascript_include_tag 'yui/general/yuiloader-beta'%>
+<%= javascript_include_tag 'yui/general/event'%>
+<%= javascript_include_tag 'yui/general/connection'%>
+
+<script>
+	jQuery(function() {
+        var availableTags = [
+        	<% @categories.each do |category| %>
+        		{ label: "<%= category.full_name %>", id: <%= category.id %> },
+			<% end %>
+        ];
+        var catAC = jQuery( "input[name='categoryAutocomplete']" ).autocomplete({
+            source: availableTags,
+            minLength: 0,
+            change: function( event, ui ) {
+            	selected_id = null
+            	if(ui.item){
+            		selected_id = ui.item.id
+            		jQuery( this ).parent().parent().find("#category_id").val(selected_id)
+            	}
+            }
+        });
+
+        jQuery("select[name='accountFromIdSelect']").on( "change", function( event ) {
+        	jQuery( this ).parent().find("input[name='accountFromId']").val(jQuery("select[name='accountFromIdSelect']").val());
+        });
+        jQuery("select[name='accountToIdSelect']").on( "change", function( event ) {
+        	jQuery( this ).parent().find("input[name='accountToId']").val(jQuery("select[name='accountToIdSelect']").val());
+        });
+    });
+
+    function addTrans(transId) {
+    	var transDate = jQuery("tr#"+transId+" input[name='trans_date']").val();
+    	var accountFromId = jQuery("tr#"+transId+" input[name='accountFromId']").val();
+    	var accountToId = jQuery("tr#"+transId+" input[name='accountToId']").val();
+    	var transName = jQuery("tr#"+transId+" textarea[name='transName']").attr('value');
+    	var amount = jQuery("tr#"+transId+" input[name='amount']").val();
+    	var categoryId = jQuery("tr#"+transId+" input[name='categoryId']").val();
+    	
+		var callback = { 
+		  success: function(o) {
+			var resp = o.responseText;
+			if(isNaN(resp)){
+				jQuery("tr#"+transId+"_info td").html("<a href='"+resp+"'>Dodano transakcję</a>")
+				jQuery("tr#"+transId+"_info td").addClass("msgSuccess")
+				jQuery("tr#"+transId).addClass("processed")
+			}
+			else{
+				jQuery("tr#"+transId+"_info td").html("Nieznany błąd!");		
+				jQuery("tr#"+transId+"_info td").addClass("msgFailure")
+				//if(Number(resp) == -1){
+				//	document.getElementById('catStatus').innerHTML = "Błąd! Nie znaleziono transakcji lub kategorii!";	
+				//}		
+			}
+		  }, 
+		  failure: function(o) {
+		  	jQuery("tr#"+transId+"_info td").html("Nieznany błąd: "+o.statusText);
+		  	jQuery("tr#"+transId+"_info td").addClass("msgFailure")
+		  }, 
+		  argument: [] 
+		}
+			
+		var postDate = "accountFromId="+accountFromId+"&accountToId="+accountToId+"&date="+transDate+
+							"&name="+encodeURI(transName)+"&amount="+amount+"&categoryId="+categoryId;
+		var url = '/ajax/addTrans';
+		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callback, postDate);  
+    }
+
+    function checkTrans(transId) {
+    	var transDate = jQuery("tr#"+transId+" input[name='trans_date']").val();
+    	var accountFromId = jQuery("tr#"+transId+" input[name='accountFromId']").val();
+    	var accountToId = jQuery("tr#"+transId+" input[name='accountToId']").val();
+    	var amount = jQuery("tr#"+transId+" input[name='amount']").val();
+    	
+		var callback = { 
+		  success: function(o) {
+			var resp = o.responseText;
+			jQuery("tr#"+transId+"_info td").html(resp)
+		  }, 
+		  failure: function(o) {
+		  	jQuery("tr#"+transId+"_info td").html("Nieznany błąd: "+o.statusText);
+		  	jQuery("tr#"+transId+"_info td").addClass("msgFailure")
+		  }, 
+		  argument: [] 
+		}
+			
+		var postDate = "accountFromId="+accountFromId+"&accountToId="+accountToId+"&date="+transDate+
+							"&id="+transId+"&amount="+amount;
+		var url = '/ajax/checkTrans';
+		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callback, postDate);  
+    }
+</script>
+
+<style>
+	table.statement {
+		
+	}
+
+	table.statement tr.msg td {
+		border-bottom: 1px solid black;
+	}
+
+	td.in {
+		color: green;
+	}
+
+	td.out {
+		color: red;
+	}
+
+	td.msgSuccess {
+		background-color: #33CC00;
+	}
+
+	td.msgFailure {
+		background-color: red;
+	}
+
+	tr.processed, tr.processed td {
+		background-color: grey;
+	}
+</style>
+
+<table class="form_table">
+	<td>
+		<td class="header">
+			Statement type:
+		</td>
+		<td>
+			<%= @statementType %>
+		</td>
+		<td class="header">
+			Account name:
+		</td>
+		<td>
+			<%= @account.name %>
+		</td>
+	</td>
+<table>
+<br/><br/>
+
+<table class="statement">
+	<tr>
+		<th>Date</th>
+		<th>From</th>
+		<th>To</th>
+		<th>Name</th>
+		<th>Amount</th>
+		<th>Category</th>
+		<th></th>
+	</tr>
+	<% for item in @items %>
+		<%
+			amount_class = ""
+			if item.account_from == nil and item.account_to != nil
+				amount_class = "in"
+			end
+			if item.account_from != nil and item.account_to == nil
+				amount_class = "out"
+			end
+		%>
+		<tr id ="<%= item.trans_nr %>">
+			<td>
+				<input type="text" size="6" name="trans_date" value="<%= date_format(item.trans_date) %>"/>
+			</td>
+			<td>
+				<input type="hidden" name="accountFromId" value="<%= item.account_from.id if item.account_from %>"/>	
+				<% if item.account_from %>
+					<%= item.account_from.name if item.account_from %>
+				<% else %>
+					<select name="accountFromIdSelect">
+						<option></option>
+						<% for account in @accounts %>
+							<option value="<%= account.id %>"><%= account.name %></option>
+						<% end %>
+					</select>
+				<% end %>
+			</td>
+			<td>
+				<input type="hidden" name="accountToId" value="<%= item.account_to.id if item.account_to %>"/>
+				<% if item.account_to %>
+					<%= item.account_to.name if item.account_to %>
+				<% else %>
+					<select name="accountToIdSelect">
+						<option></option>
+						<% for account in @accounts %>
+							<option value="<%= account.id %>"><%= account.name %></option>
+						<% end %>
+					</select>
+				<% end %>
+			</td>
+			<td>
+				<textarea rows="2" cols="50" name="transName"><%= item.name %></textarea>
+			</td>
+			<td class="<%= amount_class %>" style="text-align: right;">
+				<input type="hidden" name="amount" value="<%= sprintf("%.2f", item.trans_amount) %>"/>
+				<%= sprintf("%.2f", item.trans_amount) %>
+			</td>
+			<td>
+				<input type="hidden" id="category_id" name="categoryId" value=""/>
+				<input name="categoryAutocomplete" type="text" value="" size="25"/>
+			</td>
+			<td>
+				<a href="javascript:checkTrans('<%= item.trans_nr %>')">Check</a>
+				<a href="javascript:addTrans('<%= item.trans_nr %>')">Send</a>
+			</td>
+		</tr>
+		<tr class="msg" id ="<%= item.trans_nr %>_info">
+			<td colspan="7"></td>
+		</tr>
+	<% end %>
+<table>
