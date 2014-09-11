@@ -58,6 +58,11 @@
 
 <div class="title">Statystyki</div>
 <br>
+Przychody i wydatki oraz saldo w ostatnich: 
+<%= link_to "6 miesiącach", :controller => "stats", :action => "inout", :length => 7 %>, 
+<%= link_to "12 miesiącach", :controller => "stats", :action => "inout", :length => 13 %>, 
+<%= link_to "24 miesiącach", :controller => "stats", :action => "inout", :length => 25 %>, 
+<%= link_to "36 miesiącach", :controller => "stats", :action => "inout", :length => 37 %>
 
 <table style="width: 100%;">
 	<tr>

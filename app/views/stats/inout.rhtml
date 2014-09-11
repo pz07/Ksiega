@@ -1,0 +1,27 @@
+<%= javascript_include_tag 'swfobject.js'%>
+
+<div class="title">Statystyki</div>
+<br>
+Przychody i wydatki oraz saldo w ostatnich: 
+<%= link_to "6 miesiącach", :controller => "stats", :action => "inout", :length => 7 %>, 
+<%= link_to "12 miesiącach", :controller => "stats", :action => "inout", :length => 13 %>, 
+<%= link_to "24 miesiącach", :controller => "stats", :action => "inout", :length => 25 %>, 
+<%= link_to "36 miesiącach", :controller => "stats", :action => "inout", :length => 37 %>
+
+<table style="width: 100%;">
+	<tr>
+		<td>
+			<%= @graph01%>
+		</td>
+	</tr>
+</table>
+<br/>
+<table style="width: 100%;">
+	<tr>
+		<td>
+			<%= @graph02 %>
+		</td>
+	</tr>
+</table>
+
+

@@ -6,7 +6,12 @@ class ChartController < ApplicationController
   require 'format_utils'
 
   def graph01
-    inoutData = StatsUtils.getLastInOut(current_user.id)
+    length = 7
+    if params[:length]
+      length = params[:length].to_i
+    end
+
+    inoutData = StatsUtils.getLastInOut(current_user.id, length)
     
     inData = Array.new
     outData = Array.new
@@ -52,7 +57,12 @@ class ChartController < ApplicationController
   end
 
   def graph02
-    inoutData = StatsUtils.getLastInOut(current_user.id)
+    length = 7
+    if params[:length]
+      length = params[:length].to_i
+    end
+
+    inoutData = StatsUtils.getLastInOut(current_user.id, length)
     
     labels = Array.new
     data = Array.new
