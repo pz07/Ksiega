@@ -3,23 +3,12 @@ class User < ActiveRecord::Base
    has_many :categories, :class_name => 'Category', :foreign_key => 'user_id'
    has_many :accounts, :class_name => 'Account', :foreign_key => 'user_id'
    
-   acts_as_authentic do |c| 
-     c.openid_required_fields = [:email,"http://axschema.org/contact/email"]
+   acts_as_authentic do |c|      
    end
    
   private
    
   def map_openid_registration(registration)
-    # email by sreg
-    unless registration["email"].nil? && registration["email"].blank? 
-            self.email = registration["email"] 
-    end
-      
-    # email by ax
-    unless registration['http://axschema.org/contact/email'].nil? && registration['http://axschema.org/contact/email'].first.blank?
-            self.email = registration['http://axschema.org/contact/email'].first
-    end
-
     outcomes = Category.new
       
     outcomes.trans_type = :outcome

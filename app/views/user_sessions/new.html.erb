@@ -1,21 +1,12 @@
-<script type="text/javascript">
-	jQuery(document).ready(function() {
-		openid.init('user_session[openid_identifier]');
-	});
-</script>
-
-<% form_for :user_session, @user_session, :url => user_session_path, :html => { :method => :post, :class => "new_user_session", :id => "openid_form" } do |f| %>
+<% form_for @user_session, :url => user_session_path do |f| %>
   <%= f.error_messages %>
-  <input type="hidden" name="action" value="verify" />
-	<% field_set_tag 'Log In' do %>
-		<div id="openid_choice">
-			<p>Please log in with your account provider:</p>
-			<div id="openid_btns"></div>
-		</div>
-		
-		<div id="openid_input_area">
-			<%= text_field_tag 'openid_identifier', :id => 'openid_identifier', :value => 'https://'%>
-			<%= submit_tag "Sign-In" %>
-		</div>
-	<% end %>
+  <%= f.label :email %><br />
+  <%= f.text_field :email %><br />
+  <br />
+  <%= f.label :password %><br />
+  <%= f.password_field :password %><br />
+  <br />
+  <%= f.check_box :remember_me %><%= f.label :remember_me %><br />
+  <br />
+  <%= f.submit "Login" %>
 <% end %>

@@ -1,7 +1,28 @@
 <h1>Register</h1>
 
-<% form_for @user, :url => account_path do |f| %>
-  <%= f.error_messages %>
-  <%= render :partial => "form", :object => f %>
-  <%= f.submit "Register" %>
+<%= error_messages_for 'user' %>
+
+<% form_tag({:action => 'create'}) do %>
+  <table class="form_table">
+    <tr>
+	  <td class="header">E-mail</td>
+	  <td class="content">
+	    <%= text_field 'user', 'email' ,:tabindex => 10, :size => 30 %>
+	  </td>
+    </tr>
+    <tr>
+	  <td class="header">Password</td>
+	  <td class="content">
+	    <%= password_field 'user', 'password' ,:tabindex => 20, :size => 30 %>
+	  </td>
+    </tr>
+    <tr>
+	  <td class="header">Confirm password</td>
+	  <td class="content">
+	    <%= password_field 'user', 'password_confirmation' ,:tabindex => 30, :size => 30 %>
+	  </td>
+    </tr>
+  <table>
+  <br>
+  <%= submit_tag "Register", :tabindex => 1000 %>
 <% end %>
